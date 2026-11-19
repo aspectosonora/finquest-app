@@ -6,7 +6,7 @@ function emptyToUndefined(value: unknown) {
 }
 
 /** Número opcional proveniente de FormData: "" cuenta como "no capturado". */
-export function optionalNumber(schema: z.ZodNumber = z.coerce.number()) {
+export function optionalNumber(schema: ReturnType<typeof z.coerce.number> = z.coerce.number()) {
   return z.preprocess(emptyToUndefined, schema.optional());
 }
 
