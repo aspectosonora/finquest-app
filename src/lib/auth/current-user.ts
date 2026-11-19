@@ -1,10 +1,16 @@
 import "server-only";
 
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { readSession } from "@/lib/auth/session";
 
-export async function getCurrentUser() {
+/**
+ * Envuelto en cache() de React: dentro de una misma petición (layout + page,
+ * o varias llamadas en server actions encadenadas), la consulta a la base de
+ * datos se hace una sola vez en lugar de repetirse por cada llamada.
+ */
+export const getCurrentUser = cache(async () => {
   const session = await readSession();
   if (!session) return null;
 
@@ -20,7 +26,7 @@ export async function getCurrentUser() {
   });
 
   return user;
-}
+});
 
 export async function requireCurrentUser() {
   const user = await getCurrentUser();
