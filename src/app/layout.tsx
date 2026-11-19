@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Anton, Barlow_Condensed, Inter } from "next/font/google";
 import "./globals.css";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
+import { EffectsProvider } from "@/lib/effects/EffectsProvider";
+import { CelebrationHost } from "@/components/effects/CelebrationHost";
 
 const anton = Anton({
   variable: "--font-anton",
@@ -52,9 +54,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${anton.variable} ${barlowCondensed.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#c7cbd4] text-ink">
-        <div className="relative mx-auto flex min-h-dvh w-full max-w-[440px] flex-col overflow-x-hidden bg-mist-soft shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_20px_60px_rgba(0,0,0,0.25)]">
-          {children}
-        </div>
+        <EffectsProvider>
+          <div className="relative mx-auto flex min-h-dvh w-full max-w-[440px] flex-col overflow-x-hidden bg-mist-soft shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_20px_60px_rgba(0,0,0,0.25)]">
+            {children}
+          </div>
+          <CelebrationHost />
+        </EffectsProvider>
         <ServiceWorkerRegister />
       </body>
     </html>

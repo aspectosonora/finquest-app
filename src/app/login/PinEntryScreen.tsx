@@ -83,7 +83,7 @@ export function PinEntryScreen({
         >
           ←
         </button>
-        <img src="/assets/login/logo_finquest_blanco.png" alt="FinQuest" className="ml-4 h-6 w-auto" />
+        <img src="/assets/login/logo_finquest_blanco.webp" alt="FinQuest" className="ml-4 h-6 w-auto" />
       </div>
 
       <div className="relative z-10 flex flex-1 flex-col items-center px-6 pb-10 pt-4">

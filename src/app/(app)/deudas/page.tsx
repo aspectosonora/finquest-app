@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Suspense } from "react";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { getDebtsSummary } from "@/lib/finance/dashboard";
 import { createOtherDebtAction } from "@/lib/finance/debt-actions";
@@ -9,6 +10,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { RibbonTag } from "@/components/ui/RibbonTag";
 import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { MaskIcon } from "@/components/ui/MaskIcon";
+import { CelebrationFromQuery } from "@/components/effects/CelebrationFromQuery";
 
 const CARD_CLIP = "polygon(0 0, 100% 0, 100% 86%, 92% 100%, 0 100%)";
 const ILLUSTRATION_WEDGE_CLIP = "polygon(38% 0, 100% 0, 100% 100%, 0% 100%)";
@@ -22,6 +24,9 @@ export default async function DeudasPage() {
 
   return (
     <div className="flex flex-col pt-1">
+      <Suspense fallback={null}>
+        <CelebrationFromQuery />
+      </Suspense>
       <div className="-mx-4 bg-electric px-[14px] pb-7 pt-4 text-white">
         <DiagonalLines className="right-0 top-0 h-24 w-36" />
         <div className="relative flex items-center justify-between gap-3">

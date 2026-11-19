@@ -11,8 +11,8 @@ type Players = {
 } | null;
 
 const AVATAR_SRC = {
-  cinthya: "/assets/login/avatar_cinthya_tight.png",
-  julio: "/assets/login/avatar_julio_tight.png",
+  cinthya: "/assets/login/avatar_cinthya_tight.webp",
+  julio: "/assets/login/avatar_julio_tight.webp",
 } as const;
 
 export function CoopLogin({ players }: { players: Players }) {

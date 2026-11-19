@@ -189,6 +189,114 @@ body {
   animation: coop-shake 400ms ease-in-out;
 }
 
+/* Segundo plano: pausar toda animación CSS mientras la pestaña está oculta. */
+[data-app-hidden] * {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fx-confetti-piece {
+    animation: fx-confetti-fall var(--fx-duration, 1100ms) cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
+  }
+  .fx-pop-in {
+    animation: fx-pop-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .fx-stamp-in {
+    animation: fx-stamp-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .fx-banner-in {
+    animation: fx-banner-in 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .fx-fade-out {
+    animation: fx-fade-out 300ms ease-in forwards;
+  }
+  .fx-shimmer {
+    animation: fx-shimmer 1.4s ease-in-out infinite;
+  }
+  .fx-count-pulse {
+    animation: fx-count-pulse 220ms ease-out;
+  }
+}
+
+@keyframes fx-confetti-fall {
+  0% {
+    transform: translate(var(--fx-x, 0), -10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--fx-x-end, 0), var(--fx-y-end, 420px)) rotate(var(--fx-rotate, 540deg));
+    opacity: 0;
+  }
+}
+@keyframes fx-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes fx-stamp-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-8deg);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.15) rotate(-8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-8deg);
+  }
+}
+@keyframes fx-banner-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fx-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fx-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes fx-count-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.fx-skeleton {
+  background: linear-gradient(90deg, var(--palette-mist) 25%, #e4e6ec 37%, var(--palette-mist) 63%);
+  background-size: 400% 100%;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

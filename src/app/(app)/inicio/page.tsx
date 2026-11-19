@@ -22,6 +22,7 @@ import { CornerAccent } from "@/components/ui/CornerAccent";
 import { MaskIcon } from "@/components/ui/MaskIcon";
 import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { RibbonTag } from "@/components/ui/RibbonTag";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { debtCategoryMeta } from "@/lib/constants/debts";
 
 export default async function InicioPage() {
@@ -57,7 +58,7 @@ export default async function InicioPage() {
           Disponible hoy
         </p>
         <p className="font-display text-[80px] italic leading-none tracking-wide">
-          {formatCents(available)}
+          <AnimatedNumber value={available} />
         </p>
       </Card>
 
@@ -105,7 +106,7 @@ export default async function InicioPage() {
                   Dinero libre
                 </p>
                 <p className="truncate font-sans text-[23px] font-extrabold leading-tight text-ink">
-                  {formatCents(freeMoneyByMember[index] ?? 0)}
+                  <AnimatedNumber value={freeMoneyByMember[index] ?? 0} />
                 </p>
               </div>
             </div>
@@ -120,7 +121,7 @@ export default async function InicioPage() {
           <div>
             <p className="font-sans text-sm font-bold leading-tight text-ink">Ahorro</p>
             <p className="font-sans text-[28px] font-extrabold leading-tight text-ink">
-              {formatCents(savings)}
+              <AnimatedNumber value={savings} />
             </p>
           </div>
         </div>

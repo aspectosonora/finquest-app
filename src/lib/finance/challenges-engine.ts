@@ -1,6 +1,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
+import { levelForXp } from "@/lib/constants/challenges";
 
 /**
  * Revisa los retos iniciales del equipo contra datos reales y completa
@@ -38,8 +39,18 @@ export async function evaluateInitialChallenges(teamId: string) {
   }
 }
 
-export async function completeChallenge(teamId: string, challengeId: string, xpReward: number) {
-  await db.$transaction(async (tx) => {
+export type CompleteChallengeResult = { leveledUp: boolean; newLevel: number };
+
+export async function completeChallenge(
+  teamId: string,
+  challengeId: string,
+  xpReward: number
+): Promise<CompleteChallengeResult> {
+  return db.$transaction(async (tx) => {
+    const xpBefore = (await tx.xpAward.aggregate({ where: { teamId }, _sum: { amount: true } }))._sum
+      .amount ?? 0;
+    const levelBefore = levelForXp(xpBefore).level;
+
     const challenge = await tx.challenge.update({
       where: { id: challengeId },
       data: { status: "COMPLETED", completedAt: new Date(), progressCount: 1 },
@@ -62,6 +73,9 @@ export async function completeChallenge(teamId: string, challengeId: string, xpR
         sourceId: challengeId,
       },
     });
+
+    const levelAfter = levelForXp(xpBefore + xpReward).level;
+    return { leveledUp: levelAfter > levelBefore, newLevel: levelAfter };
   });
 }
 

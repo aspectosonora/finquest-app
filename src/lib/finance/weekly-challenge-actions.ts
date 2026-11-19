@@ -1,12 +1,14 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { markWeeklyChallengeDone } from "@/lib/finance/weekly-challenges";
+import type { CompleteChallengeResult } from "@/lib/finance/challenges-engine";
 
-export async function markWeeklyChallengeDoneAction(formData: FormData) {
+export async function markWeeklyChallengeDoneAction(
+  _prev: CompleteChallengeResult | null,
+  formData: FormData
+): Promise<CompleteChallengeResult | null> {
   const user = await requireCurrentUser();
   const challengeId = String(formData.get("challengeId") ?? "");
-  await markWeeklyChallengeDone(user.teamId, challengeId);
-  redirect("/retos");
+  return markWeeklyChallengeDone(user.teamId, challengeId);
 }

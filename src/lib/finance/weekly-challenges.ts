@@ -104,9 +104,9 @@ export async function markWeeklyChallengeDone(teamId: string, challengeId: strin
   const challenge = await db.challenge.findFirst({
     where: { id: challengeId, teamId, group: "WEEKLY", status: "ACTIVE" },
   });
-  if (!challenge) return;
-  if (AUTO_VERIFIED.has(challenge.templateKey)) return; // estos solo se completan por evidencia real
-  await completeChallenge(teamId, challenge.id, challenge.xpReward);
+  if (!challenge) return null;
+  if (AUTO_VERIFIED.has(challenge.templateKey)) return null; // estos solo se completan por evidencia real
+  return completeChallenge(teamId, challenge.id, challenge.xpReward);
 }
 
 export { AUTO_VERIFIED as WEEKLY_AUTO_VERIFIED, weekKey };

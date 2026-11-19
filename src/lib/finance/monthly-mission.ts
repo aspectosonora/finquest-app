@@ -4,7 +4,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireCurrentUser } from "@/lib/auth/current-user";
-import { completeChallenge } from "@/lib/finance/challenges-engine";
+import { completeChallenge, type CompleteChallengeResult } from "@/lib/finance/challenges-engine";
 import { monthKey, currentMonthLabel } from "@/lib/date/month";
 
 export type MonthlyMissionFormState = { error?: string } | null;
@@ -59,16 +59,17 @@ export async function createMonthlyMissionAction(
   redirect("/retos?mision=1");
 }
 
-export async function markMonthlyMissionDoneAction(formData: FormData) {
+export async function markMonthlyMissionDoneAction(
+  _prev: CompleteChallengeResult | null,
+  formData: FormData
+): Promise<CompleteChallengeResult | null> {
   const user = await requireCurrentUser();
   const challengeId = String(formData.get("challengeId") ?? "");
   const challenge = await db.challenge.findFirst({
     where: { id: challengeId, teamId: user.teamId, group: "MONTHLY", status: "ACTIVE" },
   });
-  if (challenge) {
-    await completeChallenge(user.teamId, challenge.id, challenge.xpReward);
-  }
-  redirect("/retos");
+  if (!challenge) return null;
+  return completeChallenge(user.teamId, challenge.id, challenge.xpReward);
 }
 
 export async function getCurrentMonthlyMission(teamId: string) {

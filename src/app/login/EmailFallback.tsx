@@ -22,7 +22,7 @@ export function EmailFallback({ onBack }: { onBack?: () => void }) {
       )}
 
       <div className="flex flex-col items-center gap-1">
-        <Image src="/assets/login/logo_finquest_blanco.png" alt="FinQuest" width={180} height={45} priority />
+        <Image src="/assets/login/logo_finquest_blanco.webp" alt="FinQuest" width={180} height={45} priority />
       </div>
 
       <div className="flex flex-col gap-4 rounded-2xl bg-white p-5">

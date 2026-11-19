@@ -9,6 +9,7 @@ import { TeamNameForm } from "./TeamNameForm";
 import { AvatarPicker } from "./AvatarPicker";
 import { SplitSettingsForm } from "./SplitSettingsForm";
 import { PinSettingsForm } from "./PinSettingsForm";
+import { EffectsToggle } from "./EffectsToggle";
 
 export default async function ConfiguracionPage() {
   const user = await requireCurrentUser();
@@ -66,6 +67,13 @@ export default async function ConfiguracionPage() {
         <SectionHeading>Código de acceso</SectionHeading>
         <Card>
           <PinSettingsForm hasPinSet={Boolean(user.pinCode)} />
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <SectionHeading>Experiencia</SectionHeading>
+        <Card>
+          <EffectsToggle />
         </Card>
       </section>
 

@@ -16,6 +16,7 @@ import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { MaskIcon } from "@/components/ui/MaskIcon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/cn";
+import { CompleteChallengeButton } from "@/components/ui/CompleteChallengeButton";
 import { MonthlyMissionForm } from "./MonthlyMissionForm";
 import { MarkMonthlyDoneButton } from "./MarkMonthlyDoneButton";
 
@@ -113,12 +114,12 @@ export default async function RetosPage() {
                 Se verifica automático
               </span>
             ) : (
-              <form action={markWeeklyChallengeDoneAction}>
-                <input type="hidden" name="challengeId" value={featuredDaily.id} />
-                <button type="submit" className="flex items-center gap-1.5 font-sans text-sm font-extrabold">
-                  Comenzar <span aria-hidden>→</span>
-                </button>
-              </form>
+              <CompleteChallengeButton
+                action={markWeeklyChallengeDoneAction}
+                challengeId={featuredDaily.id}
+                label="Comenzar →"
+                className="flex items-center gap-1.5 font-sans text-sm font-extrabold text-white disabled:opacity-60"
+              />
             )}
           </div>
         </Card>
@@ -285,12 +286,7 @@ function MissionCard({
             ) : isAuto ? (
               <p className="text-xs text-ink/40">Se verifica automáticamente con sus registros.</p>
             ) : (
-              <form action={markWeeklyChallengeDoneAction}>
-                <input type="hidden" name="challengeId" value={challenge.id} />
-                <button type="submit" className="text-xs font-bold text-electric underline">
-                  Marcar como cumplido
-                </button>
-              </form>
+              <CompleteChallengeButton action={markWeeklyChallengeDoneAction} challengeId={challenge.id} />
             )}
           </div>
         )}

@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
+
 type Players = {
   cinthya: { id: string; name: string };
   julio: { id: string; name: string };
 };
+
+const SELECT_TRANSITION_MS = 220;
 
 export function PlayerSelectScreen({
   players,
@@ -14,6 +18,24 @@ export function PlayerSelectScreen({
   onSelect: (player: "cinthya" | "julio") => void;
   onUseEmail: () => void;
 }) {
+  const [selecting, setSelecting] = useState<"cinthya" | "julio" | null>(null);
+
+  function handleSelect(player: "cinthya" | "julio") {
+    if (selecting) return;
+    setSelecting(player);
+    setTimeout(() => onSelect(player), SELECT_TRANSITION_MS);
+  }
+
+  function playerStyle(player: "cinthya" | "julio"): React.CSSProperties {
+    if (!selecting) return {};
+    const isSelected = selecting === player;
+    return {
+      transition: `transform ${SELECT_TRANSITION_MS}ms ease-out, opacity ${SELECT_TRANSITION_MS}ms ease-out`,
+      transform: isSelected ? "translateY(-6px) scale(1.04)" : "scale(0.98)",
+      opacity: isSelected ? 1 : 0.55,
+    };
+  }
+
   return (
     <div
       className="flex min-h-dvh items-start justify-center overflow-x-hidden"
@@ -24,7 +46,7 @@ export function PlayerSelectScreen({
         style={{
           maxWidth: 480,
           aspectRatio: "863 / 1823",
-          backgroundImage: "url(/assets/login/fondo_login.png)",
+          backgroundImage: "url(/assets/login/fondo_login.webp)",
           backgroundSize: "100% 100%",
           backgroundRepeat: "no-repeat",
           paddingTop: "env(safe-area-inset-top, 0px)",
@@ -32,7 +54,7 @@ export function PlayerSelectScreen({
       >
         {/* Logo */}
         <Box left={6.7} top={2.0} width={45} className="coop-in" style={{ animationDelay: "0ms" }}>
-          <img src="/assets/login/logo_finquest_blanco.png" alt="FinQuest" className="w-full" />
+          <img src="/assets/login/logo_finquest_blanco.webp" alt="FinQuest" className="w-full" />
         </Box>
 
         {/* Lema */}
@@ -74,32 +96,50 @@ export function PlayerSelectScreen({
         </Box>
 
         {/* Avatares (también seleccionan al jugador) */}
-        <Box left={4} top={39.5} width={50} className="coop-in-left" style={{ animationDelay: "200ms" }}>
+        <Box
+          left={4}
+          top={39.5}
+          width={50}
+          className="coop-in-left"
+          style={{ animationDelay: "200ms", ...playerStyle("cinthya") }}
+        >
           <button
             type="button"
-            onClick={() => onSelect("cinthya")}
+            onClick={() => handleSelect("cinthya")}
             aria-label={`Entrar como ${players.cinthya.name}`}
             className="block w-full active:scale-[0.97]"
           >
-            <img src="/assets/login/avatar_cinthya_tight.png" alt="" className="w-full" />
+            <img src="/assets/login/avatar_cinthya_tight.webp" alt="" className="w-full" />
           </button>
         </Box>
-        <Box left={47} top={40.3} width={52} className="coop-in-right" style={{ animationDelay: "220ms" }}>
+        <Box
+          left={47}
+          top={40.3}
+          width={52}
+          className="coop-in-right"
+          style={{ animationDelay: "220ms", ...playerStyle("julio") }}
+        >
           <button
             type="button"
-            onClick={() => onSelect("julio")}
+            onClick={() => handleSelect("julio")}
             aria-label={`Entrar como ${players.julio.name}`}
             className="block w-full active:scale-[0.97]"
           >
-            <img src="/assets/login/avatar_julio_tight.png" alt="" className="w-full" />
+            <img src="/assets/login/avatar_julio_tight.webp" alt="" className="w-full" />
           </button>
         </Box>
 
         {/* Placas (botones) */}
-        <Box left={0} top={68.1} width={53} className="coop-in" style={{ animationDelay: "260ms" }}>
+        <Box
+          left={0}
+          top={68.1}
+          width={53}
+          className="coop-in"
+          style={{ animationDelay: "260ms", ...playerStyle("cinthya") }}
+        >
           <button
             type="button"
-            onClick={() => onSelect("cinthya")}
+            onClick={() => handleSelect("cinthya")}
             aria-label={`Entrar como ${players.cinthya.name}`}
             className="relative block w-full active:scale-[0.97]"
           >
@@ -111,10 +151,16 @@ export function PlayerSelectScreen({
             />
           </button>
         </Box>
-        <Box left={44} top={68.1} width={56} className="coop-in" style={{ animationDelay: "280ms" }}>
+        <Box
+          left={44}
+          top={68.1}
+          width={56}
+          className="coop-in"
+          style={{ animationDelay: "280ms", ...playerStyle("julio") }}
+        >
           <button
             type="button"
-            onClick={() => onSelect("julio")}
+            onClick={() => handleSelect("julio")}
             aria-label={`Entrar como ${players.julio.name}`}
             className="relative block w-full active:scale-[0.97]"
           >

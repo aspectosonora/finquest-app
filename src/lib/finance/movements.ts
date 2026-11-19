@@ -65,8 +65,11 @@ export async function registerMovementAction(
 
   const existing = await db.movement.findUnique({ where: { idempotencyKey } });
   if (existing) {
-    redirect(movementRedirectTarget(tipo));
+    redirect(movementRedirectTarget(tipo, { debtDefeated: false, goalCompletedName: null }));
   }
+
+  let debtDefeated = false;
+  let goalCompletedName: string | null = null;
 
   switch (tipo) {
     case "INGRESO_COBRADO": {
@@ -151,6 +154,7 @@ export async function registerMovementAction(
               sourceId: debtId,
             },
           });
+          debtDefeated = true;
         }
       });
       break;
@@ -200,6 +204,7 @@ export async function registerMovementAction(
               sourceId: goalId,
             },
           });
+          goalCompletedName = goal.name;
         }
       });
       break;
@@ -255,15 +260,20 @@ export async function registerMovementAction(
 
   await evaluateInitialChallenges(teamId);
   await evaluateWeeklyChallenges(teamId);
-  redirect(movementRedirectTarget(tipo));
+  redirect(movementRedirectTarget(tipo, { debtDefeated, goalCompletedName }));
 }
 
-function movementRedirectTarget(tipo: (typeof CAPTURE_TYPES)[number]) {
+function movementRedirectTarget(
+  tipo: (typeof CAPTURE_TYPES)[number],
+  flags: { debtDefeated: boolean; goalCompletedName: string | null }
+) {
   switch (tipo) {
     case "ABONO_DEUDA":
-      return "/deudas?registrado=1";
+      return flags.debtDefeated ? "/deudas?debt_defeated=1" : "/deudas?payment=1";
     case "APORTACION_META":
-      return "/metas?registrado=1";
+      return flags.goalCompletedName
+        ? `/metas?goal_completed=${encodeURIComponent(flags.goalCompletedName)}`
+        : "/metas?registrado=1";
     case "LIBERAR_SUELDO":
       return "/equipo?registrado=1";
     default:

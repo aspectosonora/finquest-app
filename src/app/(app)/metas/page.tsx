@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { listActiveGoals, listCompletedGoals } from "@/lib/finance/goals-query";
 import { getTeamDefaultSplit } from "@/lib/finance/split-query";
@@ -15,6 +16,7 @@ import { RibbonTag } from "@/components/ui/RibbonTag";
 import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { MaskIcon } from "@/components/ui/MaskIcon";
 import { Avatar } from "@/components/ui/Avatar";
+import { CelebrationFromQuery } from "@/components/effects/CelebrationFromQuery";
 
 export default async function MetasPage() {
   const user = await requireCurrentUser();
@@ -47,6 +49,9 @@ export default async function MetasPage() {
 
   return (
     <div className="flex flex-col gap-5 pt-2">
+      <Suspense fallback={null}>
+        <CelebrationFromQuery />
+      </Suspense>
       <div className="relative -mx-4 flex h-24 items-center overflow-hidden">
         <div className="relative z-10 min-w-0 flex-1 pl-4 pr-4">
           <Image src="/assets/titulos/titulo_metas.png" alt="Metas" width={239} height={44} priority />
