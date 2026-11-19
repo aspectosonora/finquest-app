@@ -29,8 +29,8 @@ export const metadata: Metadata = {
     "FinQuest: la aventura financiera en pareja de Julio y Cinthya. Ahorro, deudas y metas, en equipo.",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/assets/identidad/icono_app_finquest.png",
-    apple: "/assets/identidad/icono_app_finquest.png",
+    icon: "/assets/identidad/icono_app_finquest_192.png",
+    apple: "/assets/identidad/icono_app_finquest_180.png",
   },
   appleWebApp: {
     capable: true,

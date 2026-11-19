@@ -11,10 +11,28 @@
   "lang": "es-MX",
   "icons": [
     {
-      "src": "/assets/identidad/icono_app_finquest.png",
-      "sizes": "1234x1217",
+      "src": "/assets/identidad/icono_app_finquest_192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/assets/identidad/icono_app_finquest_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/identidad/icono_app_finquest_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/identidad/icono_app_finquest_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
