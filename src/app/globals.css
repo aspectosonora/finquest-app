@@ -110,6 +110,85 @@ body {
   padding-bottom: var(--safe-bottom);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .coop-in {
+    opacity: 0;
+    animation: coop-fade-in 350ms ease-out forwards;
+  }
+  .coop-in-side {
+    opacity: 0;
+    animation: coop-slide-in 350ms ease-out forwards;
+  }
+  .coop-in-left {
+    opacity: 0;
+    animation: coop-slide-left 380ms ease-out forwards;
+  }
+  .coop-in-right {
+    opacity: 0;
+    animation: coop-slide-right 380ms ease-out forwards;
+  }
+}
+@keyframes coop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes coop-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes coop-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes coop-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes coop-shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-8px);
+  }
+  40%,
+  60% {
+    transform: translateX(8px);
+  }
+}
+.coop-shake {
+  animation: coop-shake 400ms ease-in-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
