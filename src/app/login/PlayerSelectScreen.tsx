@@ -174,8 +174,13 @@ export function PlayerSelectScreen({
         </Box>
 
         {/* Emblema central (decorativo): corazón original de FinQuest */}
-        <Box left={41.2} top={69} width={13.6} style={{ pointerEvents: "none", zIndex: 30 }} aria-hidden>
-          <img src="/assets/login/corazon_finquest.webp" alt="" className="w-full" />
+        <Box left={40.62} top={69} width={14.77} style={{ pointerEvents: "none", zIndex: 10 }} aria-hidden>
+          <img
+            src="/assets/login/emblema_finquest_blanco_v2.png"
+            alt=""
+            className="block w-full"
+            style={{ height: "auto", objectFit: "contain" }}
+          />
         </Box>
 
         {/* Botón correo */}
