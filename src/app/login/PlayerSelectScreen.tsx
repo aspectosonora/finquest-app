@@ -78,18 +78,18 @@ export function PlayerSelectScreen({
         </Box>
 
         {/* Números decorativos */}
-        <Box left={0.5} top={29.5} width={40} aria-hidden>
+        <Box left={-1} top={34} width={55} aria-hidden>
           <span
             className="block select-none font-heading italic text-white"
-            style={{ fontSize: "15.5vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
+            style={{ fontSize: "26vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
           >
             01
           </span>
         </Box>
-        <Box left={53} top={27.3} width={42} aria-hidden>
+        <Box left={44} top={32} width={58} aria-hidden>
           <span
             className="block select-none font-heading italic text-white"
-            style={{ fontSize: "15.5vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
+            style={{ fontSize: "26vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
           >
             02
           </span>
