@@ -36,7 +36,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
-      className="flex flex-1 items-center justify-center rounded-xl py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      className="flex flex-1 items-center justify-center rounded-xl py-2 text-white transition-transform duration-100 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
     >
       <span
         className={cn(

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Anton, Barlow_Condensed, Inter } from "next/font/google";
 import "./globals.css";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
+import { IOSActiveFix } from "@/components/pwa/IOSActiveFix";
 import { EffectsProvider } from "@/lib/effects/EffectsProvider";
 import { CelebrationHost } from "@/components/effects/CelebrationHost";
 
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <CelebrationHost />
         </EffectsProvider>
         <ServiceWorkerRegister />
+        <IOSActiveFix />
       </body>
     </html>
   );

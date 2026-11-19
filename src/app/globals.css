@@ -217,6 +217,9 @@ body {
   .fx-count-pulse {
     animation: fx-count-pulse 220ms ease-out;
   }
+  .fx-route-fade {
+    animation: fx-route-fade 160ms ease-out both;
+  }
 }
 
 @keyframes fx-confetti-fall {
@@ -289,6 +292,16 @@ body {
   }
   100% {
     transform: scale(1);
+  }
+}
+@keyframes fx-route-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
