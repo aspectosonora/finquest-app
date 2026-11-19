@@ -9,6 +9,53 @@ type Players = {
 
 const SELECT_TRANSITION_MS = 220;
 
+// Segmentos (estilo marcador deportivo) para los números decorativos 01/02.
+// Vectores puros (sin fuentes ni <text>) para que Safari y Chrome rindan
+// exactamente el mismo tamaño y posición.
+const SEGMENTS = {
+  a: { x: 6, y: 0, width: 48, height: 12 },
+  b: { x: 48, y: 6, width: 12, height: 49 },
+  c: { x: 48, y: 55, width: 12, height: 49 },
+  d: { x: 6, y: 98, width: 48, height: 12 },
+  e: { x: 0, y: 55, width: 12, height: 49 },
+  f: { x: 0, y: 6, width: 12, height: 49 },
+  g: { x: 6, y: 49, width: 48, height: 12 },
+} as const;
+
+const DIGIT_SEGMENTS: Record<"0" | "1" | "2", (keyof typeof SEGMENTS)[]> = {
+  "0": ["a", "b", "c", "d", "e", "f"],
+  "1": ["b", "c"],
+  "2": ["a", "b", "g", "e", "d"],
+};
+
+function Digit({ value, offsetX }: { value: "0" | "1" | "2"; offsetX: number }) {
+  return (
+    <g transform={`translate(${offsetX}, 0) skewX(-8)`}>
+      {DIGIT_SEGMENTS[value].map((key) => {
+        const seg = SEGMENTS[key];
+        return <rect key={key} x={seg.x} y={seg.y} width={seg.width} height={seg.height} />;
+      })}
+    </g>
+  );
+}
+
+function DecorativeNumber({ digits, className }: { digits: ["0", "1" | "2"]; className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 132 110"
+      preserveAspectRatio="xMinYMin meet"
+      className={className}
+      style={{ width: "100%", height: "auto", display: "block" }}
+      aria-hidden
+    >
+      <g fill="#fff" opacity={0.45}>
+        <Digit value={digits[0]} offsetX={0} />
+        <Digit value={digits[1]} offsetX={72} />
+      </g>
+    </svg>
+  );
+}
+
 export function PlayerSelectScreen({
   players,
   onSelect,
@@ -77,22 +124,12 @@ export function PlayerSelectScreen({
           </div>
         </Box>
 
-        {/* Números decorativos */}
-        <Box left={-1} top={34} width={55} aria-hidden>
-          <span
-            className="block select-none font-heading italic text-white"
-            style={{ fontSize: "26vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
-          >
-            01
-          </span>
+        {/* Números decorativos: SVG vectorial (sin fuentes), estable entre Safari y Chrome */}
+        <Box left={0.5} top={32.7} width={32} aria-hidden>
+          <DecorativeNumber digits={["0", "1"]} />
         </Box>
-        <Box left={44} top={32} width={58} aria-hidden>
-          <span
-            className="block select-none font-heading italic text-white"
-            style={{ fontSize: "26vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
-          >
-            02
-          </span>
+        <Box left={65} top={30.8} width={34} aria-hidden>
+          <DecorativeNumber digits={["0", "2"]} />
         </Box>
 
         {/* Avatares (también seleccionan al jugador) */}
