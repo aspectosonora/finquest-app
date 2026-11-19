@@ -78,18 +78,18 @@ export function PlayerSelectScreen({
         </Box>
 
         {/* Números decorativos */}
-        <Box left={0.5} top={32.7} width={31} aria-hidden>
+        <Box left={0.5} top={30.8} width={31} aria-hidden>
           <span
             className="block select-none font-heading italic text-white"
-            style={{ fontSize: "10.5vw", lineHeight: 1, opacity: 0.35, fontWeight: 800 }}
+            style={{ fontSize: "10.5vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
           >
             01
           </span>
         </Box>
-        <Box left={65} top={30.8} width={34} aria-hidden>
+        <Box left={61} top={28.9} width={34} aria-hidden>
           <span
             className="block select-none font-heading italic text-white"
-            style={{ fontSize: "10.5vw", lineHeight: 1, opacity: 0.35, fontWeight: 800 }}
+            style={{ fontSize: "10.5vw", lineHeight: 1, opacity: 0.45, fontWeight: 800 }}
           >
             02
           </span>
@@ -114,7 +114,7 @@ export function PlayerSelectScreen({
         </Box>
         <Box
           left={47}
-          top={40.3}
+          top={43.5}
           width={52}
           className="coop-in-right"
           style={{ animationDelay: "220ms", ...playerStyle("julio") }}
@@ -173,9 +173,9 @@ export function PlayerSelectScreen({
           </button>
         </Box>
 
-        {/* Emblema central (decorativo) */}
-        <Box left={43} top={69} width={17} style={{ pointerEvents: "none", zIndex: 30 }} aria-hidden>
-          <img src="/assets/login/emblema_equipo.svg" alt="" className="w-full" />
+        {/* Emblema central (decorativo): corazón original de FinQuest */}
+        <Box left={41.2} top={69} width={13.6} style={{ pointerEvents: "none", zIndex: 30 }} aria-hidden>
+          <img src="/assets/login/corazon_finquest.webp" alt="" className="w-full" />
         </Box>
 
         {/* Botón correo */}
