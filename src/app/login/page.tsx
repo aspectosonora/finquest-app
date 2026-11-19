@@ -1,7 +1,19 @@
+import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { CoopLogin } from "./CoopLogin";
 
 export const dynamic = "force-dynamic";
+
+// Fondo oscuro propio del login: barra de estado sólida oscura en vez de la
+// "default" (clara) del resto de la app, para que combine y nunca quede
+// transparente/difuminada sobre el logo.
+export const metadata: Metadata = {
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black",
+    title: "FinQuest",
+  },
+};
 
 export default async function LoginPage() {
   const members = await db.user.findMany({
