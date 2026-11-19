@@ -1,0 +1,128 @@
+[
+  {
+    "id": "inicial_primer_paso",
+    "title": "Primer paso",
+    "group": "initial",
+    "xp": 50,
+    "task": "Registrar todos sus ingresos.",
+    "svg": "svg/inicial_primer_paso.svg",
+    "png": "png/inicial_primer_paso.png"
+  },
+  {
+    "id": "inicial_conoce_al_enemigo",
+    "title": "Conoce al enemigo",
+    "group": "initial",
+    "xp": 100,
+    "task": "Registrar todas sus deudas.",
+    "svg": "svg/inicial_conoce_al_enemigo.svg",
+    "png": "png/inicial_conoce_al_enemigo.png"
+  },
+  {
+    "id": "inicial_plan_de_batalla",
+    "title": "Plan de batalla",
+    "group": "initial",
+    "xp": 100,
+    "task": "Definir su presupuesto mensual.",
+    "svg": "svg/inicial_plan_de_batalla.svg",
+    "png": "png/inicial_plan_de_batalla.png"
+  },
+  {
+    "id": "inicial_nuestra_primera_meta",
+    "title": "Nuestra primera meta",
+    "group": "initial",
+    "xp": 100,
+    "task": "Crear una meta de ahorro en pareja.",
+    "svg": "svg/inicial_nuestra_primera_meta.svg",
+    "png": "png/inicial_nuestra_primera_meta.png"
+  },
+  {
+    "id": "inicial_primer_escudo",
+    "title": "Primer escudo",
+    "group": "initial",
+    "xp": 150,
+    "task": "Realizar la primera aportación al ahorro.",
+    "svg": "svg/inicial_primer_escudo.svg",
+    "png": "png/inicial_primer_escudo.png"
+  },
+  {
+    "id": "inicial_equipo_completo",
+    "title": "Equipo completo",
+    "group": "initial",
+    "xp": 100,
+    "task": "Ambos completan su configuración financiera.",
+    "svg": "svg/inicial_equipo_completo.svg",
+    "png": "png/inicial_equipo_completo.png"
+  },
+  {
+    "id": "semanal_dia_invicto",
+    "title": "Día invicto",
+    "group": "weekly",
+    "xp": 50,
+    "task": "Un día sin gastos innecesarios.",
+    "svg": "svg/semanal_dia_invicto.svg",
+    "png": "png/semanal_dia_invicto.png"
+  },
+  {
+    "id": "semanal_racha_campeones",
+    "title": "Racha de campeones",
+    "group": "weekly",
+    "xp": 150,
+    "task": "Acumular tres días sin gastos innecesarios.",
+    "svg": "svg/semanal_racha_campeones.svg",
+    "png": "png/semanal_racha_campeones.png"
+  },
+  {
+    "id": "semanal_cocinando_en_casa",
+    "title": "Cocinando en casa",
+    "group": "weekly",
+    "xp": 100,
+    "task": "Evitar pedir comida tres veces en la semana.",
+    "svg": "svg/semanal_cocinando_en_casa.svg",
+    "png": "png/semanal_cocinando_en_casa.png"
+  },
+  {
+    "id": "semanal_resistir_tentacion",
+    "title": "Resistir la tentación",
+    "group": "weekly",
+    "xp": 150,
+    "task": "Mantenerse dentro del presupuesto semanal.",
+    "svg": "svg/semanal_resistir_tentacion.svg",
+    "png": "png/semanal_resistir_tentacion.png"
+  },
+  {
+    "id": "semanal_golpe_critico",
+    "title": "Golpe crítico",
+    "group": "weekly",
+    "xp": 200,
+    "task": "Realizar un abono adicional a una deuda.",
+    "svg": "svg/semanal_golpe_critico.svg",
+    "png": "png/semanal_golpe_critico.png"
+  },
+  {
+    "id": "semanal_cofre_tesoro",
+    "title": "Cofre del tesoro",
+    "group": "weekly",
+    "xp": 200,
+    "task": "Cumplir el objetivo de ahorro semanal.",
+    "svg": "svg/semanal_cofre_tesoro.svg",
+    "png": "png/semanal_cofre_tesoro.png"
+  },
+  {
+    "id": "semanal_contra_pronostico",
+    "title": "Contra todo pronóstico",
+    "group": "weekly",
+    "xp": 150,
+    "task": "Terminar la semana sin compras impulsivas.",
+    "svg": "svg/semanal_contra_pronostico.svg",
+    "png": "png/semanal_contra_pronostico.png"
+  },
+  {
+    "id": "mensual_mision_navidad",
+    "title": "Misión Navidad",
+    "group": "monthly",
+    "xp": null,
+    "task": "Respetar el presupuesto de diciembre y cumplir su meta de ahorro mensual.",
+    "svg": "svg/mensual_mision_navidad.svg",
+    "png": "png/mensual_mision_navidad.png"
+  }
+]

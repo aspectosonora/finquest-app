@@ -1,0 +1,20 @@
+{
+  "name": "FinQuest — Juntos subimos de nivel",
+  "short_name": "FinQuest",
+  "description": "La aventura financiera en pareja de Julio y Cinthya.",
+  "start_url": "/inicio",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef0f4",
+  "theme_color": "#1746f5",
+  "lang": "es-MX",
+  "icons": [
+    {
+      "src": "/assets/identidad/icono_app_finquest.png",
+      "sizes": "1234x1217",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

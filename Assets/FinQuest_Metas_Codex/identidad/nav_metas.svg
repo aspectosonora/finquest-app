@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="502" height="88" viewBox="0 0 502 88">
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1747ff"/><stop offset="1" stop-color="#1735d9"/></linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ff773a"/><stop offset="1" stop-color="#ff4f24"/></linearGradient>
+    <pattern id="grain" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r=".6" fill="#fff" opacity=".23"/></pattern>
+    <clipPath id="plusClip"><path d="M430 9H476L487 20V64L476 74H430L420 64V20Z"/></clipPath>
+    <symbol id="home" viewBox="0 0 24 24">
+      <path d="M1.5 10.5 12 2l10.5 8.5-2.1 2.6-2-1.6v9.8H5.6v-9.8l-2 1.6Z" fill="none" stroke="#fff" stroke-width="1.65" stroke-linejoin="round"/>
+      <path d="M12 18.5 7.8 14.2c-2.6-2.8 1.5-5.9 4.2-2.9 2.7-3 6.8.1 4.2 2.9Z" fill="#fff"/>
+    </symbol>
+    <symbol id="fist" viewBox="0 0 24 24">
+      <!-- Fist anatomy adapted from Lucide HandFist (ISC). -->
+      <g fill="none" stroke="#fff" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12.035 17.012a3 3 0 0 0-3-3l-.311-.002a.72.72 0 0 1-.505-1.229l1.195-1.195A2 2 0 0 1 10.828 11H12a2 2 0 0 0 0-4H9.243a3 3 0 0 0-2.122.879l-2.707 2.707A4.83 4.83 0 0 0 3 14a8 8 0 0 0 8 8h2a8 8 0 0 0 8-8V7a2 2 0 1 0-4 0v2a2 2 0 1 0 4 0"/>
+        <path d="M13.888 9.662A2 2 0 0 0 17 8V5A2 2 0 1 0 13 5M9 5A2 2 0 1 0 5 5V10M9 7V4A2 2 0 1 1 13 4V7.268"/>
+      </g>
+    </symbol>
+    <symbol id="boss" viewBox="0 0 24 24">
+      <path d="M5.7 9.4C2.3 8.9.6 5.7 1.7 1.3 3.8 4.7 6.2 4.8 8.4 6.4 10.6 5.3 13.4 5.3 15.6 6.4 17.8 4.8 20.2 4.7 22.3 1.3 23.4 5.7 21.7 8.9 18.3 9.4 20.2 11.6 20.8 13.9 20.2 16.1L18 20.2l-3.2 2.4H9.2L6 20.2l-2.2-4.1C3.2 13.9 3.8 11.6 5.7 9.4Z" fill="none" stroke="#fff" stroke-width="1.65" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="m6 11 4.8 2.1-.4 2.4-3.6-.7Zm12 0-4.8 2.1.4 2.4 3.6-.7Z" fill="#fff"/>
+      <path d="M8.4 18h7.2l-2 2.1H10.4Z" fill="#fff"/>
+      <path d="m9.4 17 1.2 1.4m4-1.4-1.2 1.4" stroke="#fff" stroke-width="1.15" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="flag" viewBox="0 0 24 24">
+      <path d="M3 22V2M4 3h18v15H4" stroke="#fff" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+      <path d="M4 3h6v5H4Zm12 0h6v5h-6Zm-6 5h6v5h-6ZM4 13h6v5H4Zm12 0h6v5h-6Z" fill="#fff"/>
+    </symbol>
+    <symbol id="team" viewBox="0 0 24 24">
+      <g fill="none" stroke="#fff" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="6.5" cy="5.8" r="3.7"/>
+        <circle cx="17.5" cy="5.8" r="3.7"/>
+        <path d="M10.1 12.6c-1-1.2-2.2-1.8-3.6-1.8C3.4 10.8 1.3 13.4 1.3 17v3h4.8M13.9 12.6c1-1.2 2.2-1.8 3.6-1.8 3.1 0 5.2 2.6 5.2 6.2v3h-4.8"/>
+      </g>
+      <path d="M12 23 6.9 17.9c-3-3.2 1.5-6.7 5.1-3.4 3.6-3.3 8.1.2 5.1 3.4Z" fill="#fff"/>
+    </symbol>
+  </defs>
+  <path d="M0 19 19 0h464l19 19v69H0Z" fill="url(#blue)"/>
+  <path d="M19 0H483" stroke="#426bff" stroke-width="2"/>
+  <path d="M414 88 502 0M439 88 502 25" stroke="#fff" stroke-width="1" opacity=".13"/>
+  <path d="M259 8H325L335 18V76H259Z" fill="#fff" opacity=".14"/>
+  <path d="M278 0H315" stroke="#fff" stroke-width="3"/>
+  <use xlink:href="#home" x="31" y="14" width="36" height="36"/>
+  <use xlink:href="#fist" x="113" y="14" width="36" height="36"/>
+  <use xlink:href="#boss" x="195" y="14" width="36" height="36"/>
+  <use xlink:href="#flag" x="277" y="14" width="36" height="36"/>
+  <use xlink:href="#team" x="357" y="14" width="36" height="36"/>
+  <g fill="#fff" font-family="DejaVu Sans, sans-serif" text-anchor="middle" font-size="12">
+    <text x="49" y="68">Inicio</text><text x="131" y="68">Retos</text><text x="213" y="68">Deudas</text><text x="295" y="68" font-weight="700">Metas</text><text x="375" y="68">Equipo</text>
+  </g>
+  <path d="M430 15H476L487 26V70L476 80H430L420 70V26Z" fill="#0b279a" opacity=".45"/>
+  <path d="M430 9H476L487 20V64L476 74H430L420 64V20Z" fill="url(#orange)"/>
+  <g clip-path="url(#plusClip)"><path d="M400 82 481 1H496L415 82ZM438 83 508 13H514L444 83Z" fill="#fff" opacity=".09"/><path d="M420 9h67v65h-67z" fill="url(#grain)"/></g>
+  <path d="M432 10H474L486 22" stroke="#ffb071" stroke-width="1.6" fill="none"/>
+  <path d="M433 72H474L485 62" stroke="#c83b12" stroke-width="1.5" fill="none" opacity=".65"/>
+  <path d="M449 24h9v14h14v9h-14v14h-9V47h-14v-9h14Z" fill="#fff"/>
+</svg>

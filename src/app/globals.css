@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --palette-electric: #1746f5;
+  --palette-electric-dark: #0f31b8;
+  --palette-orange: #ff5b24;
+  --palette-orange-dark: #cc3f12;
+  --palette-ink: #080a12;
+  --palette-white: #ffffff;
+  --palette-mist: #d8dae1;
+  --palette-mist-soft: #f7f7f4;
+  --palette-gold: #e8b23d;
+  --palette-gold-dark: #a9780f;
+
+  --background: var(--palette-mist-soft);
+  --foreground: var(--palette-ink);
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@theme inline {
+  --color-electric: var(--palette-electric);
+  --color-electric-dark: var(--palette-electric-dark);
+  --color-orange: var(--palette-orange);
+  --color-orange-dark: var(--palette-orange-dark);
+  --color-ink: var(--palette-ink);
+  --color-white: var(--palette-white);
+  --color-mist: var(--palette-mist);
+  --color-mist-soft: var(--palette-mist-soft);
+  --color-gold: var(--palette-gold);
+  --color-gold-dark: var(--palette-gold-dark);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-display: var(--font-anton);
+  --font-heading: var(--font-barlow-condensed);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--color-mist-soft);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Utilidades angulares propias de la identidad FinQuest ------------------- */
+
+@utility clip-br {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+}
+
+@utility clip-br-lg {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 34px) 100%, 0 100%);
+}
+
+@utility clip-tr {
+  clip-path: polygon(22px 0, 100% 0, 100% 100%, 0 100%, 0 22px);
+}
+
+@utility clip-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+}
+
+@utility clip-ribbon {
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0% 100%);
+}
+
+@utility skew-chip {
+  transform: skewX(-10deg);
+}
+
+@utility unskew-chip {
+  transform: skewX(10deg);
+}
+
+/* Título "deportivo": ancho, muy grueso e inclinado, como las referencias. */
+.fq-title {
+  font-family: var(--font-display);
+  display: inline-block;
+  transform: skewX(-8deg);
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+}
+.fq-title > * {
+  transform: skewX(8deg);
+  display: inline-block;
+}
+
+.input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 2px solid var(--color-mist);
+  background: var(--color-white);
+  padding: 0.65rem 0.9rem;
+  font-size: 1rem;
+  color: var(--color-ink);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--color-electric);
+}
+
+.safe-top {
+  padding-top: var(--safe-top);
+}
+.safe-bottom {
+  padding-bottom: var(--safe-bottom);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

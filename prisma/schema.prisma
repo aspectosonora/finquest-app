@@ -1,0 +1,618 @@
+// FinQuest — esquema de datos
+// Fuente única de verdad financiera: todo saldo se calcula a partir de
+// Movement (ledger) y de los registros reales (pagos, aportaciones, cobros).
+// No se guardan saldos ficticios ni se precargan montos.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------------------------------------------------------------------------
+// Equipo y autenticación
+// ---------------------------------------------------------------------------
+
+model Team {
+  id                    String   @id @default(cuid())
+  name                  String   @default("Nuestro equipo")
+  currency              String   @default("MXN")
+  timezone              String   @default("America/Hermosillo")
+  locale                String   @default("es-MX")
+  inviteCode            String   @unique @default(cuid())
+  inviteCodeExpiresAt   DateTime?
+  onboardingStep        Int      @default(0)
+  onboardingCompletedAt DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  members           User[]
+  splits            Split[]
+  incomeSources     IncomeSource[]
+  debts             Debt[]
+  goals             Goal[]
+  commitments       Commitment[]
+  commitmentRuns    CommitmentInstance[]
+  budgetCategories  BudgetCategory[]
+  challenges        Challenge[]
+  badges            Badge[]
+  xpAwards          XpAward[]
+  movements         Movement[]
+  reminders         Reminder[]
+  salaryConfigs     PersonalSalaryConfig[]
+  salaryReleases    SalaryRelease[]
+  rewardChestConfig RewardChestConfig[]
+  rewardChestOutcome RewardChestOutcome[]
+  monthClosings     MonthClosing[]
+}
+
+enum AvatarKey {
+  JULIO
+  CINTHYA
+  CUSTOM
+}
+
+model User {
+  id           String    @id @default(cuid())
+  teamId       String
+  team         Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  name         String
+  email        String    @unique
+  passwordHash String
+  avatarKey    AvatarKey @default(CUSTOM)
+  avatarUrl    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  splitShares        SplitShare[]
+  incomeSourcesOwned IncomeSource[]        @relation("IncomeOwner")
+  debtsOwned         Debt[]                @relation("DebtOwner")
+  debtPayments       DebtPayment[]
+  goalContributions  GoalContribution[]
+  movements          Movement[]
+  reminders          Reminder[]
+  salaryConfig       PersonalSalaryConfig?
+  salaryReleases     SalaryRelease[]
+  calendarSubscription CalendarSubscription?
+}
+
+// ---------------------------------------------------------------------------
+// Reparto del equipo (motor 65/35, con historial y overrides por meta)
+// ---------------------------------------------------------------------------
+
+enum SplitScope {
+  TEAM_DEFAULT
+  GOAL
+}
+
+model Split {
+  id            String     @id @default(cuid())
+  teamId        String
+  team          Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  scope         SplitScope @default(TEAM_DEFAULT)
+  goalId        String?
+  goal          Goal?      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  effectiveFrom DateTime   @default(now())
+  createdAt     DateTime   @default(now())
+
+  shares SplitShare[]
+
+  @@index([teamId, scope])
+}
+
+model SplitShare {
+  id      String @id @default(cuid())
+  splitId String
+  split   Split  @relation(fields: [splitId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  percent Int // 0-100, la suma de un Split debe ser 100 (validado en app)
+
+  @@unique([splitId, userId])
+}
+
+// ---------------------------------------------------------------------------
+// Ingresos (fijos, clientes por cobrar, extras)
+// ---------------------------------------------------------------------------
+
+enum IncomeType {
+  FIXED
+  RECEIVABLE_CLIENT
+  EXTRA
+}
+
+enum IncomeFrequency {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  ONE_TIME
+  IRREGULAR
+}
+
+enum IncomeSourceStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+}
+
+model IncomeSource {
+  id          String              @id @default(cuid())
+  teamId      String
+  team        Team                @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  ownerId     String
+  owner       User                @relation("IncomeOwner", fields: [ownerId], references: [id])
+  type        IncomeType
+  name        String
+  isVariable  Boolean             @default(false)
+  amountCents Int? // monto fijo esperado, null si es variable
+  frequency   IncomeFrequency     @default(MONTHLY)
+  expectedDay Int? // día del mes esperado
+  status      IncomeSourceStatus  @default(ACTIVE)
+  notes       String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  payments IncomePayment[]
+
+  @@index([teamId, type])
+}
+
+enum IncomePaymentStatus {
+  PENDING
+  OVERDUE
+  PARTIAL
+  PAID
+  CANCELLED
+}
+
+model IncomePayment {
+  id                 String              @id @default(cuid())
+  incomeSourceId     String
+  incomeSource       IncomeSource        @relation(fields: [incomeSourceId], references: [id], onDelete: Cascade)
+  amountCents        Int // monto esperado de este abono
+  receivedAmountCents Int                @default(0) // lo realmente cobrado (puede ser parcial)
+  expectedDate       DateTime?
+  receivedDate       DateTime?
+  status             IncomePaymentStatus @default(PENDING)
+  note               String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([incomeSourceId, status])
+}
+
+// ---------------------------------------------------------------------------
+// Deudas — Boss Battles
+// ---------------------------------------------------------------------------
+
+enum DebtCategory {
+  LIVERPOOL
+  CAR_LOAN
+  CREDIT_CARD
+  PERSONAL_LOAN
+  INSTALLMENTS
+  LATE_PAYMENTS
+  OTHER
+}
+
+enum DebtStatus {
+  UNCONFIGURED
+  ACTIVE
+  DEFEATED
+}
+
+model Debt {
+  id                  String       @id @default(cuid())
+  teamId               String
+  team                 Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  category             DebtCategory
+  name                 String
+  ownerId              String?
+  owner                User?        @relation("DebtOwner", fields: [ownerId], references: [id])
+  isShared             Boolean      @default(true)
+  initialAmountCents   Int          @default(0)
+  interestRateBp       Int? // tasa de interés en puntos base (opcional, si se conoce)
+  dueDayOfMonth        Int?
+  monthlyPaymentCents  Int?
+  frequency            IncomeFrequency @default(MONTHLY)
+  status               DebtStatus   @default(UNCONFIGURED)
+  sortOrder            Int          @default(0)
+  configuredAt         DateTime?
+  defeatedAt           DateTime?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  payments DebtPayment[]
+
+  @@index([teamId, status])
+}
+
+model DebtPayment {
+  id                String   @id @default(cuid())
+  debtId            String
+  debt              Debt     @relation(fields: [debtId], references: [id], onDelete: Cascade)
+  amountCents       Int
+  principalCents    Int // parte que reduce el saldo
+  interestCents     Int      @default(0)
+  isExtraordinary   Boolean  @default(false)
+  paidAt            DateTime @default(now())
+  registeredById    String
+  registeredBy      User     @relation(fields: [registeredById], references: [id])
+  createdAt         DateTime @default(now())
+
+  @@index([debtId])
+}
+
+// ---------------------------------------------------------------------------
+// Metas
+// ---------------------------------------------------------------------------
+
+enum GoalCategory {
+  HOME
+  TRAVEL
+  VEHICLE
+  TECH
+  EMERGENCY_FUND
+  EXPERIENCES
+  PROJECTS
+  CUSTOM
+}
+
+enum GoalMode {
+  BY_DATE
+  BY_BUDGET
+}
+
+model Goal {
+  id                 String       @id @default(cuid())
+  teamId             String
+  team               Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  name               String
+  category           GoalCategory
+  photoUrl           String?
+  targetAmountCents  Int
+  mode               GoalMode     @default(BY_DATE)
+  targetDate         DateTime?
+  monthlyBudgetCents Int?
+  isPrimary          Boolean      @default(false)
+  isCompleted        Boolean      @default(false)
+  completedAt        DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  contributions GoalContribution[]
+  splits        Split[]
+
+  @@index([teamId, isCompleted])
+}
+
+model GoalContribution {
+  id             String   @id @default(cuid())
+  goalId         String
+  goal           Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  amountCents    Int
+  contributedAt  DateTime @default(now())
+  note           String?
+  createdAt      DateTime @default(now())
+
+  @@index([goalId])
+}
+
+// ---------------------------------------------------------------------------
+// Sueldo personal
+// ---------------------------------------------------------------------------
+
+model PersonalSalaryConfig {
+  id                 String   @id @default(cuid())
+  teamId             String
+  team               Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  desiredAmountCents Int
+  updatedAt          DateTime @updatedAt
+  createdAt          DateTime @default(now())
+}
+
+model SalaryRelease {
+  id          String   @id @default(cuid())
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amountCents Int
+  monthLabel  String // "2026-12"
+  releasedAt  DateTime @default(now())
+  note        String?
+
+  @@index([teamId, userId, monthLabel])
+}
+
+// ---------------------------------------------------------------------------
+// Compromisos / próximos pagos recurrentes
+// ---------------------------------------------------------------------------
+
+model Commitment {
+  id             String          @id @default(cuid())
+  teamId         String
+  team           Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  name           String
+  amountCents    Int
+  dueDayOfMonth  Int
+  recurrence     IncomeFrequency @default(MONTHLY)
+  category       String?
+  linkedDebtId   String?
+  autoGenerate   Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  instances CommitmentInstance[]
+}
+
+enum CommitmentStatus {
+  PENDING
+  PARTIAL
+  PAID
+  OVERDUE
+}
+
+model CommitmentInstance {
+  id              String            @id @default(cuid())
+  commitmentId    String
+  commitment      Commitment        @relation(fields: [commitmentId], references: [id], onDelete: Cascade)
+  teamId          String
+  team            Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  dueDate         DateTime
+  amountCents     Int
+  paidAmountCents Int               @default(0)
+  status          CommitmentStatus  @default(PENDING)
+  monthLabel      String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([teamId, monthLabel])
+}
+
+// ---------------------------------------------------------------------------
+// Presupuestos por categoría
+// ---------------------------------------------------------------------------
+
+model BudgetCategory {
+  id               String   @id @default(cuid())
+  teamId           String
+  team             Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  name             String
+  icon             String?
+  monthlyLimitCents Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([teamId])
+}
+
+// ---------------------------------------------------------------------------
+// Ledger único de movimientos (fuente de verdad financiera)
+// ---------------------------------------------------------------------------
+
+enum MovementType {
+  INCOME_RECEIVED
+  EXPENSE
+  DEBT_PAYMENT
+  GOAL_CONTRIBUTION
+  SALARY_RELEASE
+  REWARD_CHEST_PAYOUT
+  ADJUSTMENT
+}
+
+model Movement {
+  id              String       @id @default(cuid())
+  teamId          String
+  team            Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId          String?
+  user            User?        @relation(fields: [userId], references: [id])
+  type            MovementType
+  amountCents     Int // positivo = entra a disponible, negativo = sale
+  category        String?
+  note            String?
+  occurredAt      DateTime     @default(now())
+  relatedDebtId   String?
+  relatedGoalId   String?
+  relatedIncomePaymentId String?
+  relatedBudgetCategoryId String?
+  idempotencyKey  String?      @unique
+  createdAt       DateTime     @default(now())
+
+  @@index([teamId, type, occurredAt])
+}
+
+// ---------------------------------------------------------------------------
+// Retos, XP e insignias
+// ---------------------------------------------------------------------------
+
+enum ChallengeGroup {
+  INITIAL
+  WEEKLY
+  MONTHLY
+}
+
+enum ChallengeStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  NOT_APPLICABLE
+}
+
+model Challenge {
+  id            String          @id @default(cuid())
+  teamId        String
+  team          Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  templateKey   String
+  title         String
+  description   String
+  group         ChallengeGroup
+  xpReward      Int
+  targetCount   Int             @default(1)
+  progressCount Int             @default(0)
+  periodStart   DateTime?
+  periodEnd     DateTime?
+  status        ChallengeStatus @default(ACTIVE)
+  completedAt   DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  xpAward XpAward?
+
+  @@index([teamId, group, status])
+}
+
+model XpAward {
+  id          String    @id @default(cuid())
+  teamId      String
+  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  challengeId String    @unique
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  amount      Int
+  awardedAt   DateTime  @default(now())
+}
+
+enum BadgeSource {
+  CHALLENGE
+  DEBT_DEFEATED
+  GOAL_COMPLETED
+  SEASON
+}
+
+model Badge {
+  id         String      @id @default(cuid())
+  teamId     String
+  team       Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  badgeKey   String
+  title      String
+  sourceType BadgeSource
+  sourceId   String?
+  earnedAt   DateTime    @default(now())
+
+  @@unique([teamId, badgeKey, sourceId])
+}
+
+// ---------------------------------------------------------------------------
+// Cofre del tesoro
+// ---------------------------------------------------------------------------
+
+model RewardChestConfig {
+  id               String   @id @default(cuid())
+  teamId           String
+  team             Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  percentOfSurplus Int      @default(20)
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+
+  @@index([teamId])
+}
+
+enum RewardChestChoice {
+  EXPERIENCE
+  OUTING
+  SALARY_BOOST
+  SAVE
+  GOAL_CONTRIBUTION
+}
+
+model RewardChestOutcome {
+  id          String             @id @default(cuid())
+  teamId      String
+  team        Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  monthLabel  String
+  unlocked    Boolean            @default(false)
+  amountCents Int?
+  choice      RewardChestChoice?
+  decidedAt   DateTime?
+  createdAt   DateTime           @default(now())
+
+  @@unique([teamId, monthLabel])
+}
+
+// ---------------------------------------------------------------------------
+// Recordatorios y calendario
+// ---------------------------------------------------------------------------
+
+enum ReminderType {
+  PAYMENT_DUE
+  DEBT_DUE
+  RECEIVABLE_PENDING
+  GOAL_CONTRIBUTION
+  CHALLENGE_ENDING
+  MONTH_CLOSE
+  TEAM_MEETING
+}
+
+enum ReminderLeadTime {
+  ONE_DAY
+  THREE_DAYS
+  ONE_WEEK
+  CUSTOM
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+  DISMISSED
+  CANCELLED
+}
+
+model Reminder {
+  id                 String           @id @default(cuid())
+  teamId             String
+  team               Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId             String? // null = ambos integrantes
+  user               User?            @relation(fields: [userId], references: [id])
+  type               ReminderType
+  title              String
+  relatedDebtId      String?
+  relatedGoalId      String?
+  relatedIncomeSourceId String?
+  dueAt              DateTime
+  leadTime           ReminderLeadTime @default(ONE_DAY)
+  customLeadMinutes  Int?
+  status             ReminderStatus   @default(PENDING)
+  icsUid             String           @unique @default(cuid())
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([teamId, status, dueAt])
+}
+
+model CalendarSubscription {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String    @unique @default(cuid())
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+}
+
+// ---------------------------------------------------------------------------
+// Cierre mensual
+// ---------------------------------------------------------------------------
+
+model MonthClosing {
+  id                   String    @id @default(cuid())
+  teamId               String
+  team                 Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  monthLabel           String
+  xpEarned             Int       @default(0)
+  challengesCompleted  Int       @default(0)
+  badgesEarned         Int       @default(0)
+  amountSavedCents     Int       @default(0)
+  debtReductionCents   Int       @default(0)
+  goalsCompletedCount  Int       @default(0)
+  rewardUnlockedCents  Int?
+  surplusDecision      String?
+  closedAt             DateTime  @default(now())
+
+  @@unique([teamId, monthLabel])
+}
