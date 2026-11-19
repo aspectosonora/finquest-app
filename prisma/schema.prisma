@@ -64,6 +64,11 @@ model User {
   passwordHash String
   avatarKey    AvatarKey @default(CUSTOM)
   avatarUrl    String?
+
+  // Código numérico (4-6 dígitos) como acceso rápido alterno a correo+contraseña.
+  pinCode           String?
+  pinFailedAttempts Int       @default(0)
+  pinLockedUntil    DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
