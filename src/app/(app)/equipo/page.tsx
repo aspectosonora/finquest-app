@@ -18,21 +18,26 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { CornerAccent } from "@/components/ui/CornerAccent";
+import { timed } from "@/lib/perf/timing";
 
 export default async function EquipoPage() {
+  const pageStart = Date.now();
   const user = await requireCurrentUser();
   const teamId = user.teamId;
 
   const [available, received, receivable, reserved, incomeTotals, defaultSplit, salaryConfigs] =
-    await Promise.all([
-      getAvailableToday(teamId),
-      getReceivedTotal(teamId),
-      getReceivableTotal(teamId),
-      getReservedTotal(teamId),
-      getIncomeTotalsByType(teamId),
-      getTeamDefaultSplit(teamId),
-      db.personalSalaryConfig.findMany({ where: { teamId } }),
-    ]);
+    await timed("equipo.dataPromiseAll", () =>
+      Promise.all([
+        getAvailableToday(teamId),
+        getReceivedTotal(teamId),
+        getReceivableTotal(teamId),
+        getReservedTotal(teamId),
+        getIncomeTotalsByType(teamId),
+        getTeamDefaultSplit(teamId),
+        db.personalSalaryConfig.findMany({ where: { teamId } }),
+      ])
+    );
+  console.log(`[perf] equipo.beforeRender ${Date.now() - pageStart}ms`);
 
   const members = user.team.members;
   const shareByUser = Object.fromEntries((defaultSplit?.shares ?? []).map((s) => [s.userId, s.percent]));

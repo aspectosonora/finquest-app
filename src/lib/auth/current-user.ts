@@ -4,6 +4,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { readSession } from "@/lib/auth/session";
+import { timed } from "@/lib/perf/timing";
 
 /**
  * Envuelto en cache() de React: dentro de una misma petición (layout + page,
@@ -11,19 +12,21 @@ import { readSession } from "@/lib/auth/session";
  * datos se hace una sola vez en lugar de repetirse por cada llamada.
  */
 export const getCurrentUser = cache(async () => {
-  const session = await readSession();
+  const session = await timed("auth.readSession", () => readSession());
   if (!session) return null;
 
-  const user = await db.user.findUnique({
-    where: { id: session.userId },
-    include: {
-      team: {
-        include: {
-          members: { orderBy: { createdAt: "asc" } },
+  const user = await timed("auth.dbUser", () =>
+    db.user.findUnique({
+      where: { id: session.userId },
+      include: {
+        team: {
+          include: {
+            members: { orderBy: { createdAt: "asc" } },
+          },
         },
       },
-    },
-  });
+    })
+  );
 
   return user;
 });
