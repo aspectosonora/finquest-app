@@ -1,4 +1,4 @@
-const CACHE_NAME = "finquest-shell-v1";
+const CACHE_NAME = "finquest-shell-v2";
 const APP_SHELL = ["/manifest.webmanifest", "/assets/identidad/icono_app_finquest.png"];
 
 self.addEventListener("install", (event) => {
