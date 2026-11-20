@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { NAV_ITEMS } from "@/lib/constants/nav";
 import { MaskIcon } from "@/components/ui/MaskIcon";
 import { QuickAddFab } from "@/components/nav/QuickAddSheet";
+import { markTap } from "@/lib/perf/nav-timing";
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -36,6 +37,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
+      onClick={() => markTap(item.href)}
       className="flex flex-1 items-center justify-center rounded-xl py-2 text-white transition-transform duration-100 active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
     >
       <span
