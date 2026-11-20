@@ -24,27 +24,22 @@ import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { RibbonTag } from "@/components/ui/RibbonTag";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { debtCategoryMeta } from "@/lib/constants/debts";
-import { timed } from "@/lib/perf/timing";
 
 export default async function InicioPage() {
-  const pageStart = Date.now();
   const user = await requireCurrentUser();
   const teamId = user.teamId;
   const members = user.team.members;
 
   const [available, xp, savings, primaryGoal, activeBoss, upcomingChallenges, freeMoneyByMember] =
-    await timed("inicio.dataPromiseAll", () =>
-      Promise.all([
-        getAvailableToday(teamId),
-        getTeamXp(teamId),
-        getTeamSavings(teamId),
-        getPrimaryGoal(teamId),
-        getActiveBoss(teamId),
-        getUpcomingChallenges(teamId, 2),
-        Promise.all(members.map((m) => getPersonalFreeMoney(m.id))),
-      ])
-    );
-  console.log(`[perf] inicio.beforeRender ${Date.now() - pageStart}ms`);
+    await Promise.all([
+      getAvailableToday(teamId),
+      getTeamXp(teamId),
+      getTeamSavings(teamId),
+      getPrimaryGoal(teamId),
+      getActiveBoss(teamId),
+      getUpcomingChallenges(teamId, 2),
+      Promise.all(members.map((m) => getPersonalFreeMoney(m.id))),
+    ]);
 
   const { level, currentThreshold, nextThreshold } = levelForXp(xp);
   const xpIntoLevel = xp - currentThreshold;
