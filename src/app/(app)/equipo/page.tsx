@@ -3,13 +3,13 @@ import Image from "next/image";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
 import {
-  getAvailableToday,
-  getReceivedTotal,
-  getReceivableTotal,
-  getReservedTotal,
-  getIncomeTotalsByType,
-} from "@/lib/finance/dashboard";
-import { getTeamDefaultSplit } from "@/lib/finance/split-query";
+  getAvailableTodayCached as getAvailableToday,
+  getReceivedTotalCached as getReceivedTotal,
+  getReceivableTotalCached as getReceivableTotal,
+  getReservedTotalCached as getReservedTotal,
+  getIncomeTotalsByTypeCached as getIncomeTotalsByType,
+  getTeamDefaultSplitCached as getTeamDefaultSplit,
+} from "@/lib/finance/dashboard-cached";
 import { formatCents } from "@/lib/finance/money";
 import { weekdayShort } from "@/lib/date/month";
 import { Card } from "@/components/ui/Card";

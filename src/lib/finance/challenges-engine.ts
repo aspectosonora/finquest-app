@@ -2,6 +2,8 @@ import "server-only";
 
 import { db } from "@/lib/db";
 import { levelForXp } from "@/lib/constants/challenges";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 /**
  * Revisa los retos iniciales del equipo contra datos reales y completa
@@ -76,6 +78,9 @@ export async function completeChallenge(
 
     const levelAfter = levelForXp(xpBefore + xpReward).level;
     return { leveledUp: levelAfter > levelBefore, newLevel: levelAfter };
+  }).then((result) => {
+    updateTag(FINANCE_CACHE_TAG);
+    return result;
   });
 }
 
@@ -84,4 +89,5 @@ export async function markChallengeNotApplicable(teamId: string, challengeId: st
     where: { id: challengeId, teamId, group: "INITIAL" },
     data: { status: "NOT_APPLICABLE" },
   });
+  updateTag(FINANCE_CACHE_TAG);
 }

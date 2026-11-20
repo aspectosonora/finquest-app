@@ -7,6 +7,8 @@ import { requireCurrentUser } from "@/lib/auth/current-user";
 import { pesosToCents } from "@/lib/finance/money";
 import { evaluateInitialChallenges } from "@/lib/finance/challenges-engine";
 import { optionalNumber } from "@/lib/validation/zod-helpers";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type IncomeFormState = { error?: string } | null;
 
@@ -64,6 +66,7 @@ export async function createIncomeSourceAction(
   }
 
   await evaluateInitialChallenges(user.teamId);
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/equipo/ingresos?creado=1");
 }
 
@@ -119,6 +122,7 @@ export async function collectIncomePaymentAction(
   ]);
 
   await evaluateInitialChallenges(user.teamId);
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/equipo/ingresos?cobrado=1");
 }
 
@@ -130,5 +134,6 @@ export async function pauseIncomeSourceAction(formData: FormData) {
     where: { id, teamId: user.teamId },
     data: { status: nextStatus as "ACTIVE" | "PAUSED" | "CANCELLED" },
   });
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/equipo/ingresos");
 }

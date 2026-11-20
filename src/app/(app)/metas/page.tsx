@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { listActiveGoals, listCompletedGoals } from "@/lib/finance/goals-query";
-import { getTeamDefaultSplit } from "@/lib/finance/split-query";
+import { getTeamDefaultSplitCached as getTeamDefaultSplit } from "@/lib/finance/dashboard-cached";
 import { calculateGoal } from "@/lib/finance/goal-calc";
 import { formatCents } from "@/lib/finance/money";
 import { GOAL_CATEGORIES, GOAL_ACHIEVEMENTS_ILLUSTRATION } from "@/lib/constants/goals";

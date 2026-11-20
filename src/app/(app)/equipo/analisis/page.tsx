@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import {
-  getAvailableToday,
-  getTeamSavings,
-  getDebtsSummary,
-  getReceivableTotal,
-  getPrimaryGoal,
-} from "@/lib/finance/dashboard";
+  getAvailableTodayCached as getAvailableToday,
+  getTeamSavingsCached as getTeamSavings,
+  getDebtsSummaryCached as getDebtsSummary,
+  getReceivableTotalCached as getReceivableTotal,
+  getPrimaryGoalCached as getPrimaryGoal,
+} from "@/lib/finance/dashboard-cached";
 import { formatCents } from "@/lib/finance/money";
 import { Card } from "@/components/ui/Card";
 

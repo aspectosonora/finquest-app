@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
-import { getTeamXp } from "@/lib/finance/dashboard";
+import { getTeamXpCached as getTeamXp } from "@/lib/finance/dashboard-cached";
 import { levelForXp } from "@/lib/constants/challenges";
 import { markChallengeNotApplicable } from "@/lib/finance/challenges-engine";
 import { markWeeklyChallengeDoneAction } from "@/lib/finance/weekly-challenge-actions";

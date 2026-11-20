@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { completeChallenge, type CompleteChallengeResult } from "@/lib/finance/challenges-engine";
 import { monthKey, currentMonthLabel } from "@/lib/date/month";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type MonthlyMissionFormState = { error?: string } | null;
 
@@ -56,6 +58,7 @@ export async function createMonthlyMissionAction(
     },
   });
 
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/retos?mision=1");
 }
 

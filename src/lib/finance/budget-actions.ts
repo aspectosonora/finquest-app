@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { pesosToCents } from "@/lib/finance/money";
 import { evaluateInitialChallenges } from "@/lib/finance/challenges-engine";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type BudgetFormState = { error?: string } | null;
 
@@ -35,6 +37,7 @@ export async function createBudgetCategoryAction(
   });
 
   await evaluateInitialChallenges(user.teamId);
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/equipo/presupuestos?creado=1");
 }
 
@@ -42,5 +45,6 @@ export async function deleteBudgetCategoryAction(formData: FormData) {
   const user = await requireCurrentUser();
   const id = String(formData.get("id") ?? "");
   await db.budgetCategory.deleteMany({ where: { id, teamId: user.teamId } });
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/equipo/presupuestos");
 }

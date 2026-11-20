@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { pesosToCents } from "@/lib/finance/money";
 import { optionalNumber } from "@/lib/validation/zod-helpers";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type SalaryFormState = { error?: string } | null;
 
@@ -43,5 +45,6 @@ export async function setPersonalSalariesAction(
     )
   );
 
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/equipo?sueldos=1");
 }

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Suspense } from "react";
 import { requireCurrentUser } from "@/lib/auth/current-user";
-import { getDebtsSummary } from "@/lib/finance/dashboard";
+import { getDebtsSummaryCached as getDebtsSummary } from "@/lib/finance/dashboard-cached";
 import { createOtherDebtAction } from "@/lib/finance/debt-actions";
 import { debtCategoryMeta } from "@/lib/constants/debts";
 import { formatCents } from "@/lib/finance/money";

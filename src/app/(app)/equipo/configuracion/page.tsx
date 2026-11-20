@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireCurrentUser } from "@/lib/auth/current-user";
-import { getTeamDefaultSplit } from "@/lib/finance/split-query";
+import { getTeamDefaultSplitCached as getTeamDefaultSplit } from "@/lib/finance/dashboard-cached";
 import { logoutAction } from "@/lib/auth/actions";
 import { Card } from "@/components/ui/Card";
 import { SectionHeading } from "@/components/ui/SectionHeading";

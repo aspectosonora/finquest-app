@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { clampPercent } from "@/lib/finance/money";
 import { evaluateInitialChallenges } from "@/lib/finance/challenges-engine";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type OnboardingFormState = { error?: string } | null;
 
@@ -48,6 +50,7 @@ export async function setTeamSplitAction(
     data: { onboardingStep: Math.max(user.team.onboardingStep, 2) },
   });
 
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/onboarding?paso=3");
 }
 

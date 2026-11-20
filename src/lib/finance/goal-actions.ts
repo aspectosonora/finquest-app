@@ -7,6 +7,8 @@ import { requireCurrentUser } from "@/lib/auth/current-user";
 import { pesosToCents, clampPercent } from "@/lib/finance/money";
 import { evaluateInitialChallenges } from "@/lib/finance/challenges-engine";
 import { optionalNumber } from "@/lib/validation/zod-helpers";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type GoalFormState = { error?: string } | null;
 
@@ -119,6 +121,7 @@ export async function createGoalAction(
   });
 
   await evaluateInitialChallenges(user.teamId);
+  updateTag(FINANCE_CACHE_TAG);
   redirect(`/metas?creada=1&goal=${goal.id}`);
 }
 
@@ -131,5 +134,6 @@ export async function setPrimaryGoalAction(formData: FormData) {
     db.goal.updateMany({ where: { id: goalId, teamId: user.teamId }, data: { isPrimary: true } }),
   ]);
 
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/metas");
 }

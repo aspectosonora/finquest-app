@@ -2,14 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import {
-  getAvailableToday,
-  getTeamXp,
-  getPersonalFreeMoney,
-  getTeamSavings,
-  getPrimaryGoal,
-  getActiveBoss,
-  getUpcomingChallenges,
-} from "@/lib/finance/dashboard";
+  getAvailableTodayCached as getAvailableToday,
+  getTeamXpCached as getTeamXp,
+  getPersonalFreeMoneyCached as getPersonalFreeMoney,
+  getTeamSavingsCached as getTeamSavings,
+  getPrimaryGoalCached as getPrimaryGoal,
+  getActiveBossCached as getActiveBoss,
+  getUpcomingChallengesCached as getUpcomingChallenges,
+} from "@/lib/finance/dashboard-cached";
 import { levelForXp } from "@/lib/constants/challenges";
 import { formatCents } from "@/lib/finance/money";
 import { Card } from "@/components/ui/Card";

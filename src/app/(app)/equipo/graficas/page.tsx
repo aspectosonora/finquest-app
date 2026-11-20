@@ -7,7 +7,10 @@ import {
   debtReductionSummary,
   pledgedVsActualThisMonth,
 } from "@/lib/finance/charts-query";
-import { getReceivableTotal, getTeamSavings } from "@/lib/finance/dashboard";
+import {
+  getReceivableTotalCached as getReceivableTotal,
+  getTeamSavingsCached as getTeamSavings,
+} from "@/lib/finance/dashboard-cached";
 import { formatCents } from "@/lib/finance/money";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";

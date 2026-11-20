@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { clampPercent } from "@/lib/finance/money";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type SettingsFormState = { error?: string } | null;
 
@@ -75,5 +77,6 @@ export async function updateTeamSplitAction(
     },
   });
 
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/equipo/configuracion?reparto=1");
 }

@@ -9,6 +9,8 @@ import { monthKey } from "@/lib/date/month";
 import { evaluateInitialChallenges } from "@/lib/finance/challenges-engine";
 import { evaluateWeeklyChallenges } from "@/lib/finance/weekly-challenges";
 import { getAvailableToday } from "@/lib/finance/dashboard";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type CaptureFormState = { error?: string } | null;
 
@@ -260,6 +262,7 @@ export async function registerMovementAction(
 
   await evaluateInitialChallenges(teamId);
   await evaluateWeeklyChallenges(teamId);
+  updateTag(FINANCE_CACHE_TAG);
   redirect(movementRedirectTarget(tipo, { debtDefeated, goalCompletedName }));
 }
 

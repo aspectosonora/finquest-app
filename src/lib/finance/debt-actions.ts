@@ -7,6 +7,8 @@ import { requireCurrentUser } from "@/lib/auth/current-user";
 import { pesosToCents } from "@/lib/finance/money";
 import { evaluateInitialChallenges } from "@/lib/finance/challenges-engine";
 import { optionalNumber } from "@/lib/validation/zod-helpers";
+import { updateTag } from "next/cache";
+import { FINANCE_CACHE_TAG } from "@/lib/finance/cache-tags";
 
 export type DebtFormState = { error?: string } | null;
 
@@ -33,6 +35,7 @@ export async function createOtherDebtAction() {
       sortOrder: nextSortOrder,
     },
   });
+  updateTag(FINANCE_CACHE_TAG);
   redirect(`/deudas/${debt.id}/configurar`);
 }
 
@@ -71,5 +74,6 @@ export async function configureDebtAction(
   });
 
   await evaluateInitialChallenges(user.teamId);
+  updateTag(FINANCE_CACHE_TAG);
   redirect("/deudas?configurado=1");
 }
