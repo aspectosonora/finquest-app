@@ -2,6 +2,10 @@ import Image from "next/image";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { logoutAction } from "@/lib/auth/actions";
 import { getTeamDefaultSplit } from "@/lib/finance/split-query";
+import {
+  getEmergencyFundGoal,
+  suggestEmergencyFundTargetCents,
+} from "@/lib/finance/emergency-fund-query";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { InviteCodeCard } from "@/components/team/InviteCodeCard";
@@ -14,6 +18,14 @@ export default async function OnboardingPage() {
   const defaultSplit = await getTeamDefaultSplit(user.teamId);
 
   const step = members.length < 2 ? 1 : !defaultSplit ? 2 : 3;
+
+  const [emergencyFundGoal, suggestedEmergencyFundCents] =
+    step === 3
+      ? await Promise.all([
+          getEmergencyFundGoal(user.teamId),
+          suggestEmergencyFundTargetCents(user.teamId),
+        ])
+      : [null, 0];
 
   return (
     <div className="mx-auto flex min-h-full max-w-md flex-col gap-6 px-5 py-8">
@@ -60,7 +72,13 @@ export default async function OnboardingPage() {
         </section>
       )}
 
-      {step === 3 && <FinishStep members={members} />}
+      {step === 3 && (
+        <FinishStep
+          members={members}
+          hasEmergencyFund={Boolean(emergencyFundGoal)}
+          suggestedEmergencyFundCents={suggestedEmergencyFundCents}
+        />
+      )}
 
       <form action={logoutAction} className="text-center">
         <button type="submit" className="font-heading text-xs font-bold text-ink/30 underline">

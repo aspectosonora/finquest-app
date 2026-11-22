@@ -10,12 +10,14 @@ import {
   getIncomeTotalsByTypeCached as getIncomeTotalsByType,
   getTeamDefaultSplitCached as getTeamDefaultSplit,
 } from "@/lib/finance/dashboard-cached";
+import { getPendingSettlements } from "@/lib/finance/fixed-expenses-query";
+import { markSettlementPaidAction } from "@/lib/finance/fixed-expenses-actions";
 import { formatCents } from "@/lib/finance/money";
 import { weekdayShort } from "@/lib/date/month";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ButtonLink } from "@/components/ui/Button";
+import { ButtonLink, Button } from "@/components/ui/Button";
 import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { CornerAccent } from "@/components/ui/CornerAccent";
 
@@ -23,7 +25,7 @@ export default async function EquipoPage() {
   const user = await requireCurrentUser();
   const teamId = user.teamId;
 
-  const [available, received, receivable, reserved, incomeTotals, defaultSplit, salaryConfigs] =
+  const [available, received, receivable, reserved, incomeTotals, defaultSplit, salaryConfigs, pendingSettlements] =
     await Promise.all([
       getAvailableToday(teamId),
       getReceivedTotal(teamId),
@@ -32,6 +34,7 @@ export default async function EquipoPage() {
       getIncomeTotalsByType(teamId),
       getTeamDefaultSplit(teamId),
       db.personalSalaryConfig.findMany({ where: { teamId } }),
+      getPendingSettlements(teamId),
     ]);
 
   const members = user.team.members;
@@ -186,6 +189,44 @@ export default async function EquipoPage() {
               Su dinero personal, sin registrar en qué lo gastan.
             </p>
           </div>
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <SectionHeading>Pendientes entre ustedes</SectionHeading>
+        <Card className="flex flex-col gap-2">
+          {pendingSettlements.length === 0 ? (
+            <p className="text-sm text-ink/60">No hay nada pendiente por liquidar.</p>
+          ) : (
+            pendingSettlements.map((m) => (
+              <div
+                key={m.id}
+                className="flex items-center justify-between gap-3 rounded-xl bg-mist-soft px-3 py-2"
+              >
+                <div>
+                  <p className="font-heading font-bold">{m.category ?? "Gasto fijo"}</p>
+                  <p className="text-sm text-ink/60">
+                    {m.settlementOwerUser?.name} le debe {formatCents(m.settlementAmountCents ?? 0)} a{" "}
+                    {m.settlementPayerUser?.name}
+                  </p>
+                </div>
+                {m.settlementOwerUserId === user.id ? (
+                  <form action={markSettlementPaidAction}>
+                    <input type="hidden" name="movementId" value={m.id} />
+                    <Button
+                      type="submit"
+                      variant="outline-orange"
+                      className="w-auto shrink-0 !px-4 !py-2 text-xs"
+                    >
+                      Ya pagué
+                    </Button>
+                  </form>
+                ) : (
+                  <span className="shrink-0 text-xs font-bold uppercase text-ink/40">Pendiente</span>
+                )}
+              </div>
+            ))
+          )}
         </Card>
       </section>
 

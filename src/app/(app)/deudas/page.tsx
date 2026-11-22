@@ -11,6 +11,7 @@ import { RibbonTag } from "@/components/ui/RibbonTag";
 import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { MaskIcon } from "@/components/ui/MaskIcon";
 import { CelebrationFromQuery } from "@/components/effects/CelebrationFromQuery";
+import { DebtStrategyToggle } from "./DebtStrategyToggle";
 
 const CARD_CLIP = "polygon(0 0, 100% 0, 100% 86%, 92% 100%, 0 100%)";
 const ILLUSTRATION_WEDGE_CLIP = "polygon(38% 0, 100% 0, 100% 100%, 0% 100%)";
@@ -50,6 +51,8 @@ export default async function DeudasPage() {
             <span className="font-sans text-xs font-bold uppercase tracking-wide">derrotados</span>
           </span>
         </div>
+
+        {activeCount > 1 && <DebtStrategyToggle current={user.team.debtStrategy} />}
       </div>
 
       <div className="-mx-4 flex flex-col gap-[10px] bg-electric px-[6px] pb-7 pt-[10px]">

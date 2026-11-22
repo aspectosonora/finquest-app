@@ -77,3 +77,31 @@ export async function configureDebtAction(
   updateTag(FINANCE_CACHE_TAG);
   redirect("/deudas?configurado=1");
 }
+
+export async function setDebtStrategyAction(formData: FormData) {
+  const user = await requireCurrentUser();
+  const strategy = String(formData.get("strategy") ?? "");
+  if (strategy !== "SNOWBALL" && strategy !== "AVALANCHE") return;
+
+  const debts = await db.debt.findMany({
+    where: { teamId: user.teamId, status: "ACTIVE" },
+    include: { payments: true },
+  });
+
+  const ranked = [...debts].sort((a, b) => {
+    if (strategy === "SNOWBALL") {
+      const balanceA = a.initialAmountCents - a.payments.reduce((sum, p) => sum + p.principalCents, 0);
+      const balanceB = b.initialAmountCents - b.payments.reduce((sum, p) => sum + p.principalCents, 0);
+      return balanceA - balanceB;
+    }
+    return (b.interestRateBp ?? 0) - (a.interestRateBp ?? 0);
+  });
+
+  await db.$transaction([
+    db.team.update({ where: { id: user.teamId }, data: { debtStrategy: strategy } }),
+    ...ranked.map((debt, index) => db.debt.update({ where: { id: debt.id }, data: { sortOrder: index } })),
+  ]);
+
+  updateTag(FINANCE_CACHE_TAG);
+  redirect("/deudas?estrategia=1");
+}

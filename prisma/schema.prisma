@@ -26,6 +26,7 @@ model Team {
   inviteCodeExpiresAt   DateTime?
   onboardingStep        Int      @default(0)
   onboardingCompletedAt DateTime?
+  debtStrategy          DebtStrategy @default(MANUAL)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
@@ -42,6 +43,7 @@ model Team {
   xpAwards          XpAward[]
   movements         Movement[]
   reminders         Reminder[]
+  fixedExpenseTypes FixedExpenseType[]
   salaryConfigs     PersonalSalaryConfig[]
   salaryReleases    SalaryRelease[]
   rewardChestConfig RewardChestConfig[]
@@ -82,6 +84,13 @@ model User {
   salaryConfig       PersonalSalaryConfig?
   salaryReleases     SalaryRelease[]
   calendarSubscription CalendarSubscription?
+
+  // Gastos fijos (luz, agua, internet...) que esta persona es responsable de
+  // pagar directamente, y los movimientos donde queda "a deber" o "le deben"
+  // su parte del reparto (ver FixedExpenseType y Movement.settlement*).
+  responsibleForFixedExpenses FixedExpenseType[] @relation("FixedExpenseResponsible")
+  settlementsOwed             Movement[]         @relation("MovementSettlementOwer")
+  settlementsReceivable       Movement[]         @relation("MovementSettlementPayer")
 }
 
 // ---------------------------------------------------------------------------
@@ -207,6 +216,15 @@ enum DebtStatus {
   UNCONFIGURED
   ACTIVE
   DEFEATED
+}
+
+// MANUAL = el orden lo definen capturando deudas (sortOrder actual).
+// SNOWBALL = ataca primero al jefe con menor saldo restante.
+// AVALANCHE = ataca primero al jefe con mayor tasa de interés.
+enum DebtStrategy {
+  MANUAL
+  SNOWBALL
+  AVALANCHE
 }
 
 model Debt {
@@ -400,6 +418,28 @@ model BudgetCategory {
 }
 
 // ---------------------------------------------------------------------------
+// Gastos fijos con responsable (luz, agua, internet...): uno de los dos paga
+// de su bolsillo y el reparto del equipo determina cuánto le debe reembolsar
+// el otro. El monto de cada ocurrencia es variable (ver Movement.settlement*);
+// solo el nombre y quién es el responsable se configuran una vez.
+// ---------------------------------------------------------------------------
+
+model FixedExpenseType {
+  id                String   @id @default(cuid())
+  teamId            String
+  team              Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  name              String
+  icon              String?
+  responsibleUserId String
+  responsibleUser   User     @relation("FixedExpenseResponsible", fields: [responsibleUserId], references: [id])
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([teamId])
+}
+
+// ---------------------------------------------------------------------------
 // Ledger único de movimientos (fuente de verdad financiera)
 // ---------------------------------------------------------------------------
 
@@ -411,6 +451,11 @@ enum MovementType {
   SALARY_RELEASE
   REWARD_CHEST_PAYOUT
   ADJUSTMENT
+}
+
+enum SettlementStatus {
+  PENDING
+  SETTLED
 }
 
 model Movement {
@@ -431,7 +476,22 @@ model Movement {
   idempotencyKey  String?      @unique
   createdAt       DateTime     @default(now())
 
+  // Reparto entre los dos cuando este gasto es de un FixedExpenseType: quién
+  // puso el dinero de verdad (settlementPayer), quién le debe su parte
+  // (settlementOwer) y si ya se liquidó (la transferencia real pasa fuera de
+  // la app; esto solo registra que ya se avisó/confirmó). amountCents de
+  // arriba siempre es el total real pagado, sin dividir.
+  relatedFixedExpenseTypeId String?
+  settlementPayerUserId     String?
+  settlementPayerUser       User?             @relation("MovementSettlementPayer", fields: [settlementPayerUserId], references: [id])
+  settlementOwerUserId      String?
+  settlementOwerUser        User?             @relation("MovementSettlementOwer", fields: [settlementOwerUserId], references: [id])
+  settlementAmountCents     Int?
+  settlementStatus          SettlementStatus?
+  settlementSettledAt       DateTime?
+
   @@index([teamId, type, occurredAt])
+  @@index([settlementOwerUserId, settlementStatus])
 }
 
 // ---------------------------------------------------------------------------

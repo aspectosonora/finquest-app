@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { getTeamDefaultSplitCached as getTeamDefaultSplit } from "@/lib/finance/dashboard-cached";
+import { getFixedExpenseTypesWithTurn } from "@/lib/finance/fixed-expenses-query";
 import { logoutAction } from "@/lib/auth/actions";
 import { Card } from "@/components/ui/Card";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -10,11 +11,18 @@ import { AvatarPicker } from "./AvatarPicker";
 import { SplitSettingsForm } from "./SplitSettingsForm";
 import { PinSettingsForm } from "./PinSettingsForm";
 import { EffectsToggle } from "./EffectsToggle";
+import { FixedExpenseTypesManager } from "./FixedExpenseTypesManager";
 
 export default async function ConfiguracionPage() {
   const user = await requireCurrentUser();
   const members = user.team.members;
-  const split = await getTeamDefaultSplit(user.teamId);
+  const [split, fixedExpenseTypes] = await Promise.all([
+    getTeamDefaultSplit(user.teamId),
+    getFixedExpenseTypesWithTurn(
+      user.teamId,
+      members.map((m) => m.id)
+    ),
+  ]);
   const julioPercent = split?.shares.find((s) => s.userId === members[0]?.id)?.percent ?? 50;
 
   return (
@@ -55,6 +63,18 @@ export default async function ConfiguracionPage() {
           )}
         </Card>
       </section>
+
+      {members.length === 2 && (
+        <section className="flex flex-col gap-2">
+          <SectionHeading>Gastos fijos</SectionHeading>
+          <Card>
+            <FixedExpenseTypesManager
+              members={members.map((m) => ({ id: m.id, name: m.name }))}
+              fixedExpenseTypes={fixedExpenseTypes}
+            />
+          </Card>
+        </section>
+      )}
 
       {members.length < 2 && (
         <section className="flex flex-col gap-2">

@@ -6,8 +6,7 @@ import { levelForXp } from "@/lib/constants/challenges";
 import { markChallengeNotApplicable } from "@/lib/finance/challenges-engine";
 import { markWeeklyChallengeDoneAction } from "@/lib/finance/weekly-challenge-actions";
 import { ensureWeeklyChallenges, WEEKLY_AUTO_VERIFIED } from "@/lib/finance/weekly-challenges";
-import { getCurrentMonthlyMission } from "@/lib/finance/monthly-mission";
-import { currentMonthLabel } from "@/lib/date/month";
+import { ensureMoneyDateMission } from "@/lib/finance/monthly-mission";
 import { currentWeekRange } from "@/lib/date/week";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -17,7 +16,6 @@ import { MaskIcon } from "@/components/ui/MaskIcon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/cn";
 import { CompleteChallengeButton } from "@/components/ui/CompleteChallengeButton";
-import { MonthlyMissionForm } from "./MonthlyMissionForm";
 import { MarkMonthlyDoneButton } from "./MarkMonthlyDoneButton";
 
 const HEADER_WEDGE_CLIP = "polygon(40% 0, 100% 0, 100% 100%, 0% 100%)";
@@ -55,7 +53,7 @@ export default async function RetosPage() {
       where: { teamId: user.teamId, group: "WEEKLY", periodStart: start },
       orderBy: { createdAt: "asc" },
     }),
-    getCurrentMonthlyMission(user.teamId),
+    ensureMoneyDateMission(user.teamId),
     getTeamXp(user.teamId),
   ]);
 
@@ -162,31 +160,27 @@ export default async function RetosPage() {
       )}
 
       <div className="flex flex-col gap-3">
-        <SectionHeading>Misión mensual</SectionHeading>
-        {monthlyMission ? (
-          <Card
-            className={`clip-br relative overflow-hidden !border-0 bg-ink p-4 text-white ${monthlyMission.status === "COMPLETED" ? "opacity-70" : ""}`}
-          >
-            <DiagonalLines className="right-0 top-0 h-16 w-24" opacity={0.15} />
-            <RibbonTag className="relative">Misión del mes</RibbonTag>
-            <p className="fq-title relative mt-1.5 text-xl uppercase">
-              <span>{monthlyMission.title}</span>
-            </p>
-            <p className="relative text-sm text-white/80">{monthlyMission.description}</p>
-            <div className="relative mt-2 flex items-center justify-between">
-              <span className="rounded-full bg-white px-3 py-1 font-heading text-sm font-extrabold text-orange">
-                +{monthlyMission.xpReward} XP
-              </span>
-              {monthlyMission.status === "COMPLETED" ? (
-                <span className="text-xs font-bold uppercase">Completada</span>
-              ) : (
-                <MarkMonthlyDoneButton challengeId={monthlyMission.id} />
-              )}
-            </div>
-          </Card>
-        ) : (
-          <MonthlyMissionForm monthLabel={currentMonthLabel()} />
-        )}
+        <SectionHeading>Cita del dinero</SectionHeading>
+        <Card
+          className={`clip-br relative overflow-hidden !border-0 bg-ink p-4 text-white ${monthlyMission.status === "COMPLETED" ? "opacity-70" : ""}`}
+        >
+          <DiagonalLines className="right-0 top-0 h-16 w-24" opacity={0.15} />
+          <RibbonTag className="relative">Ritual del mes</RibbonTag>
+          <p className="fq-title relative mt-1.5 text-xl uppercase">
+            <span>{monthlyMission.title}</span>
+          </p>
+          <p className="relative text-sm text-white/80">{monthlyMission.description}</p>
+          <div className="relative mt-2 flex items-center justify-between">
+            <span className="rounded-full bg-white px-3 py-1 font-heading text-sm font-extrabold text-orange">
+              +{monthlyMission.xpReward} XP
+            </span>
+            {monthlyMission.status === "COMPLETED" ? (
+              <span className="text-xs font-bold uppercase">Completada</span>
+            ) : (
+              <MarkMonthlyDoneButton challengeId={monthlyMission.id} />
+            )}
+          </div>
+        </Card>
       </div>
 
       <Card className="relative flex items-stretch gap-0 overflow-hidden !p-0">

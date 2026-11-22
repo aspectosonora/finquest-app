@@ -9,6 +9,7 @@ const OPTIONS = [
   { tipo: "INGRESO_ESPERADO", label: "Registrar ingreso esperado", href: "/equipo/ingresos/nuevo" },
   { tipo: "GASTO", label: "Registrar gasto", href: "/capturar?tipo=GASTO" },
   { tipo: "PAGO", label: "Registrar pago", href: "/capturar?tipo=PAGO" },
+  { tipo: "GASTO_FIJO", label: "Registrar gasto fijo (luz, agua...)", href: "/capturar?tipo=GASTO_FIJO" },
   { tipo: "ABONO_DEUDA", label: "Registrar abono a deuda", href: "/capturar?tipo=ABONO_DEUDA" },
   { tipo: "APORTACION_META", label: "Registrar aportación al ahorro", href: "/capturar?tipo=APORTACION_META" },
   { tipo: "APARTAR", label: "Apartar dinero", href: "/capturar?tipo=APARTAR" },

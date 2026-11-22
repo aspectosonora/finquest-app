@@ -1,13 +1,17 @@
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
+import { getTeamDefaultSplit } from "@/lib/finance/split-query";
+import { getFixedExpenseTypesWithTurn } from "@/lib/finance/fixed-expenses-query";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ButtonLink } from "@/components/ui/Button";
 import { CaptureForm } from "./CaptureForm";
+import { FixedExpenseCaptureForm } from "./FixedExpenseCaptureForm";
 
 const TITLES: Record<string, string> = {
   INGRESO_COBRADO: "Registrar ingreso cobrado",
   GASTO: "Registrar gasto",
   PAGO: "Registrar pago",
+  GASTO_FIJO: "Registrar gasto fijo",
   ABONO_DEUDA: "Registrar abono a deuda",
   APARTAR: "Apartar dinero",
   LIBERAR_SUELDO: "Liberar sueldo personal",
@@ -54,6 +58,51 @@ export default async function CapturarPage({
     return (
       <Shell title={TITLES[tipo]}>
         <CaptureForm tipo={tipo} members={members} debts={activeDebts.map((d) => ({ id: d.id, name: d.name }))} />
+      </Shell>
+    );
+  }
+
+  if (tipo === "GASTO_FIJO") {
+    const memberIds = user.team.members.map((m) => m.id);
+    const [fixedExpenseTypes, split] = await Promise.all([
+      getFixedExpenseTypesWithTurn(user.teamId, memberIds),
+      getTeamDefaultSplit(user.teamId),
+    ]);
+
+    if (fixedExpenseTypes.length === 0) {
+      return (
+        <div className="flex flex-col gap-4 pt-2">
+          <EmptyState
+            title="Todavía no configuran gastos fijos"
+            description="Agrega cada gasto fijo (luz, agua, internet...) y quién empieza pagándolo en Configuración."
+            action={
+              <ButtonLink href="/equipo/configuracion" className="mt-2">
+                Ir a Configuración →
+              </ButtonLink>
+            }
+          />
+        </div>
+      );
+    }
+
+    const shareByUser = Object.fromEntries((split?.shares ?? []).map((s) => [s.userId, s.percent]));
+    const nameById = Object.fromEntries(user.team.members.map((m) => [m.id, m.name]));
+    const types = fixedExpenseTypes.map((t) => {
+      const otherMember = user.team.members.find((m) => m.id !== t.currentTurnUserId);
+      const responsiblePercent = shareByUser[t.currentTurnUserId] ?? 50;
+      return {
+        id: t.id,
+        name: t.name,
+        responsibleUserId: t.currentTurnUserId,
+        responsibleUserName: nameById[t.currentTurnUserId] ?? t.responsibleUser.name,
+        responsiblePercent,
+        otherUserName: otherMember?.name ?? null,
+      };
+    });
+
+    return (
+      <Shell title={TITLES[tipo]}>
+        <FixedExpenseCaptureForm types={types} />
       </Shell>
     );
   }

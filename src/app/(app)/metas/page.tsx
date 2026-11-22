@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { listActiveGoals, listCompletedGoals } from "@/lib/finance/goals-query";
 import { getTeamDefaultSplitCached as getTeamDefaultSplit } from "@/lib/finance/dashboard-cached";
+import { suggestEmergencyFundTargetCents } from "@/lib/finance/emergency-fund-query";
 import { calculateGoal } from "@/lib/finance/goal-calc";
 import { formatCents } from "@/lib/finance/money";
 import { GOAL_CATEGORIES, GOAL_ACHIEVEMENTS_ILLUSTRATION } from "@/lib/constants/goals";
@@ -17,6 +18,7 @@ import { DiagonalLines } from "@/components/ui/DiagonalLines";
 import { MaskIcon } from "@/components/ui/MaskIcon";
 import { Avatar } from "@/components/ui/Avatar";
 import { CelebrationFromQuery } from "@/components/effects/CelebrationFromQuery";
+import { EmergencyFundQuickForm } from "@/components/finance/EmergencyFundQuickForm";
 
 export default async function MetasPage() {
   const user = await requireCurrentUser();
@@ -28,6 +30,13 @@ export default async function MetasPage() {
 
   const primaryGoal = activeGoals.find((g) => g.isPrimary) ?? activeGoals[0] ?? null;
   const otherGoals = activeGoals.filter((g) => g.id !== primaryGoal?.id);
+
+  const hasEmergencyFund = [...activeGoals, ...completedGoals].some(
+    (g) => g.category === "EMERGENCY_FUND"
+  );
+  const suggestedEmergencyFundCents = hasEmergencyFund
+    ? 0
+    : await suggestEmergencyFundTargetCents(user.teamId);
 
   const shares = (defaultSplit?.shares ?? []).map((s) => ({ userId: s.userId, percent: s.percent }));
   const membersById = Object.fromEntries(user.team.members.map((m) => [m.id, m.name]));
@@ -206,6 +215,22 @@ export default async function MetasPage() {
               </Card>
             </Link>
           ))}
+        </section>
+      )}
+
+      {!hasEmergencyFund && (
+        <section className="flex flex-col gap-2">
+          <SectionHeading>Fondo de emergencia</SectionHeading>
+          <Card className="flex flex-col gap-3">
+            <p className="text-sm text-ink/60">
+              Recomendado: ahorrar entre 3 y 6 meses de gastos para imprevistos, antes o junto con sus
+              otras metas.
+            </p>
+            <EmergencyFundQuickForm
+              suggestedAmountPesos={suggestedEmergencyFundCents / 100}
+              redirectTo="/metas?fondo_creado=1"
+            />
+          </Card>
         </section>
       )}
 
